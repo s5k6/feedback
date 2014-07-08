@@ -195,9 +195,11 @@ Generate a report in the group's directory
 
 
 > report course gf mpf indivFile rfs
->   = do maxPoints <- tableFile' rational mpf
+>   = do maxBonusPoints <- tableFile' ((,) <$> rational <*> rational) mpf
+>        let maxPoints = map fst maxBonusPoints -- the 100%
+>            limPoints = map (uncurry (+)) maxBonusPoints -- the limit
 >        groups <- readGroupTable gf
->        ratings <- joinRatings <$> mapM (readRatingTable maxPoints) rfs
+>        ratings <- joinRatings <$> mapM (readRatingTable limPoints) rfs
 >        assert (M.keysSet ratings `S.isSubsetOf` M.keysSet groups)
 >                 "Ratings is not a submap of groups"
 >        mkIndividual indivFile (sum maxPoints) groups ratings
