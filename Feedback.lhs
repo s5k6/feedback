@@ -136,9 +136,10 @@ for the same assignment.
 
 Generate a report in the group's directory
 
-> feedback :: String -> [Rational] -> GroupID -> [Maybe Rational] -> IO ()
-> feedback course maxPoints g ps
->   = writeFile ("../../group/"++g++"/punkte") . unlines
+> feedback :: String -> String -> [Rational] -> GroupID -> [Maybe Rational]
+>          -> IO ()
+> feedback gd ff maxPoints g ps
+>   = writeFile (gd++"/"++g++"/"++ff) . unlines
 >     $
 >     [ "# Punkte für Gruppe " ++ show g
 >     , unwords [ "# Gesamt:"
@@ -194,7 +195,7 @@ Generate a report in the group's directory
 
 
 
-> report course gf mpf indivFile rfs
+> report gd ff gf mpf indivFile rfs
 >   = do maxBonusPoints <- tableFile' ((,) <$> rational <*> rational) mpf
 >        let maxPoints = map fst maxBonusPoints -- the 100%
 >            limPoints = map (uncurry (+)) maxBonusPoints -- the limit
@@ -203,12 +204,12 @@ Generate a report in the group's directory
 >        assert (M.keysSet ratings `S.isSubsetOf` M.keysSet groups)
 >                 "Ratings is not a submap of groups"
 >        mkIndividual indivFile (sum maxPoints) groups ratings
->        mapM_ (uncurry $ feedback course maxPoints) . M.toList
+>        mapM_ (uncurry $ feedback gd ff maxPoints) . M.toList
 >                  $ M.map (fmap $ fmap rat) ratings
 
 
 > main
 >   = do as <- getArgs
 >        case as of
->          (c:gf:mpf:indivFile:rfs)
->            -> report c gf mpf indivFile rfs
+>          (gd:ff:gf:mpf:indivFile:rfs)
+>            -> report gd ff gf mpf indivFile rfs
