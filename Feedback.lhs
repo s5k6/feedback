@@ -10,6 +10,19 @@
 > type GroupID = String
 > type TutID = String
 
+> data Config
+>     = Config
+>       { groupBaseDir :: String
+>       , feedbackFile :: String
+>       , groupsFile :: String
+>       , maxPointsFile :: String
+>       , studResultFile :: String
+>       , tutorPointFiles :: [String]
+>       , reqdPerc :: Int -- req'd percent for admittance
+>       , failPerc :: Int -- min percent per exercise
+>       , failMax :: Int -- max failed exercises
+>       }
+  
   
 Helper functions
 
@@ -136,10 +149,10 @@ for the same assignment.
 
 Generate a report in the group's directory
 
-> feedback :: String -> String -> [Rational] -> GroupID -> [Maybe Rational]
+> feedback :: Config -> [Rational] -> GroupID -> [Maybe Rational]
 >          -> IO ()
-> feedback gd ff maxPoints g ps
->   = writeFile (gd++"/"++g++"/"++ff) . unlines
+> feedback cfg maxPoints g ps
+>   = writeFile (groupBaseDir cfg++"/"++g++"/"++feedbackFile cfg) . unlines
 >     $
 >     [ "# Punkte für Gruppe " ++ show g
 >     , unwords [ "# Gesamt:"
@@ -168,48 +181,72 @@ Generate a report in the group's directory
 >     tm = sum maxPoints
 
 
+> count :: (a -> Bool) -> [a] -> Int
+> count p = length . filter p
+            
 
-> mkIndividual indivFile maxTotal groups ratings
->   = writeFile indivFile . unlines
+> mkOverview cfg maxPoints groups ratings
+>   = writeFile (studResultFile cfg) . unlines
 >     $
->     [ "# Punkte je Student und Abgabe, 100% = "++sfr maxTotal
+>     [ "# Punktestand je Student und Abgabe."
+>     , concat [ "# reqd = ", show $ reqdPerc cfg, "% = ", sfr reqd
+>              , "/", sfr maxTotal
+>              , ", failure = ", show fMax, "<"
+>              , show $ failPerc cfg
+>              , "%"
+>              ]
+>     , "# <student> <abgabe>* #<erreicht>% <abs. zuviel> <noch fehlversuche>"
 >     , ""
 >     ]
 >     ++
->     map
->     (\(s, ps) ->
->       uncols
->       $
->       s
->       :
->       map (maybe "~" sfr) ps
->       ++
->       [ concat [ "#"
->                , maybe "0" show $ percent (sum $ catMaybes ps) maxTotal
->                , "%"
->                ]
->       ]
->     )
->     (M.toList $ accumRatings (inverseGroups groups) ratings)
+>     map f (M.toList $ accumRatings (inverseGroups groups) ratings)
+>   where
+>   maxTotal = sum maxPoints
+>   mins = map (\p -> p * fromIntegral (failPerc cfg) / 100) maxPoints
+>   fMax = failMax cfg
+>   reqd = maxTotal * fromIntegral (reqdPerc cfg) / 100
+>   f (s,ps)
+>       = let gained = sum $ catMaybes ps
+>             gainedPerc = percent gained maxTotal
+>             failed = count id $ zipWith (\m -> maybe (0<m) (<m)) mins ps
+>         in uncols
+>            $
+>            s
+>            :
+>            map (maybe "~" sfr) ps
+>            ++
+>            [ concat [ "#", maybe "0" show gainedPerc, "%" ]
+>            , sfr $ gained - reqd
+>            , show $ fMax - failed
+>            ]
 
 
-
-
-> report gd ff gf mpf indivFile rfs
->   = do maxBonusPoints <- tableFile' ((,) <$> rational <*> rational) mpf
+> report cfg
+>   = do maxBonusPoints <- tableFile' ((,) <$> rational <*> rational)
+>                            (maxPointsFile cfg)
 >        let maxPoints = map fst maxBonusPoints -- the 100%
 >            limPoints = map (uncurry (+)) maxBonusPoints -- the limit
->        groups <- readGroupTable gf
->        ratings <- joinRatings <$> mapM (readRatingTable limPoints) rfs
+>        groups <- readGroupTable $ groupsFile cfg
+>        ratings <- joinRatings <$> mapM (readRatingTable limPoints)
+>                                   (tutorPointFiles cfg)
 >        assert (M.keysSet ratings `S.isSubsetOf` M.keysSet groups)
 >                 "Ratings is not a submap of groups"
->        mkIndividual indivFile (sum maxPoints) groups ratings
->        mapM_ (uncurry $ feedback gd ff maxPoints) . M.toList
+>        mkOverview cfg maxPoints groups ratings
+>        mapM_ (uncurry $ feedback cfg maxPoints) . M.toList
 >                  $ M.map (fmap $ fmap rat) ratings
 
 
 > main
 >   = do as <- getArgs
 >        case as of
->          (gd:ff:gf:mpf:indivFile:rfs)
->            -> report gd ff gf mpf indivFile rfs
+>          (rf:gd:ff:gf:mp:tp)
+>            -> report Config{ groupBaseDir = gd
+>                            , feedbackFile = ff
+>                            , groupsFile = gf
+>                            , maxPointsFile = mp
+>                            , studResultFile = rf
+>                            , tutorPointFiles = tp
+>                            , reqdPerc = 50
+>                            , failPerc = 10
+>                            , failMax = 3
+>                            }

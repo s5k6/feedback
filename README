@@ -1,0 +1,68 @@
+======================================================================
+
+Synopsis
+
+    feedback ‹Result› ‹GrpDir› ‹Feedback› ‹Groups› ‹Max› ‹Rating›*
+
+    
+Input
+
+  * The ‹Groups› file has the format
+
+        ‹group› ‹flag› ‹member›*
+
+    Where ‹group› is the group's name, ‹flag› indicates the assigned
+    tutorial or `~` if none, and ‹member› is the member's
+    identification, usually the university email address.
+
+  * The file ‹Max› contains one line per assignment, showing the
+    number of points required to achieve 100%, and the number of
+    available bonus points.  This file determines the number of
+    assignments.
+
+  * Each tutor provides a file ‹Rating› with the following format:
+
+        ‹group› ‹gained›*
+
+    Where ‹group› identifies a group, and ‹gained› is the amount of
+    points for the corresponding exercise.  ‹gained› may be `~` iff no
+    grading has happened (maybe the group is closed).
+
+    
+Output
+  
+  * For each ‹group› found in the ‹Groups› database, an overview of
+    gained points will be written into the file
+
+        ‹GrpDir›/‹group›/‹Feedback›
+
+    The format being one line per assignment, showing the assignment
+    number, points gained, the points required for 100%, and the
+    percentage gained.  A `~` indicates that no rating has happened,
+    or div/zero for the percentage.  The header comment contains the
+    overall percentage.
+
+  * For each student found in the ‹Groups› database, an overview of
+    gained points will be written into the file ‹Result›.  The format
+    being one line per student, showing the student identifier, a list
+    of gained points (or `~` if no grading has happened), and as a
+    comment the percentage achieved.  The heading comment contains the
+    points required to achieve 100%.
+
+    
+Consistency checks performed
+
+  * A student cannot gain points from different groups for the same
+    tutorial.
+
+  * A group cannot be rated more than once by different tutors for the
+    same assignment.
+
+  * Per rating, a tutor cannot grant more than the points required for
+    100% plus the bonus points.
+
+  * In the tutor's rating files, there must be at least one entry for
+    every group and every assignment (there may be additional ones).
+
+
+======================================================================
