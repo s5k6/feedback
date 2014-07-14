@@ -48,6 +48,7 @@ The field parsers                                               M-x orgtbl-mode
 >                , mbNil
 >                , spaces, lexeme
 >                , Parser, SourcePos
+>                , uncols, unRat, assert, percent, pad  
 >                ) where
 
 
@@ -55,6 +56,7 @@ The field parsers                                               M-x orgtbl-mode
 > import Control.Applicative
 > import Data.Char ( digitToInt )
 > import Data.Ratio
+> import Data.List ( intersperse )
 
 
 --------------------------------------------------------------------------------
@@ -220,7 +222,36 @@ Parse something, and augment it with the position in the source code.
 > pos :: (SourcePos -> a -> b) -> Parser a -> Parser b
 > pos f p = f <$> getPosition <*> p
 
+
+--------------------------------------------------------------------------------
+Helper functions
+
+       
+> assert p msg
+>   = if p then return () else fail msg
+
+
+> uncols = concat . intersperse "\t"        
+
+ 
+> unRat = show . fromRational
+
   
+> pad n c
+>   = reverse . fill n . reverse . show
+>   where
+>   fill 0 xs = xs
+>   fill k (x:xs) = x : fill (k-1) xs
+>   fill k [] = replicate k c
+
+    
+> percent :: Rational -> Rational -> Maybe Int
+> percent all frac
+>   = if all > 0
+>     then Just . floor . fromRational $ frac / all * 100
+>     else Nothing
+
+         
 ================================================================================
 Example section
 

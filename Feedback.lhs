@@ -24,30 +24,6 @@
 >       }
   
   
-Helper functions
-
-> assert p msg
->   = if p then return () else fail msg
-
-> sfr = show . fromRational
-
-> uncols = concat . intersperse "\t"
->
-> pad n c
->   = reverse . fill n . reverse . show
->   where
->   fill 0 xs = xs
->   fill k (x:xs) = x : fill (k-1) xs
->   fill k [] = replicate k c
-
-> percent :: Rational -> Rational -> Maybe Int
-> percent frac all
->   = if all > 0
->     then Just . floor . fromRational $ frac / all * 100
->     else Nothing
-
-
-      
 Store ratings with their position in source.
       
 > data Rating = Rating { at :: SourcePos, rat :: Rational }
@@ -66,7 +42,7 @@ Parse one rating (rational), maybe nil, or in the range 0–hi.
 >        case i of
 >          Nothing -> return ()
 >          Just p -> do assert (rat p >= 0) $ "Value "++show p++" negative"
->                       assert (rat p <= hi) $ "Value "++show p++" > "++sfr hi
+>                       assert (rat p <= hi) $ "Value "++show p++" > "++unRat hi
 >        return i
 
 
@@ -156,10 +132,10 @@ Generate a report in the group's directory
 >     $
 >     [ "# Punkte für Gruppe " ++ show g
 >     , unwords [ "# Gesamt:"
->               , sfr tg
+>               , unRat tg
 >               , "von"
->               , sfr tm
->               , "(" ++ maybe "~" show (percent tg tm) ++ "%)"
+>               , unRat tm
+>               , "(" ++ maybe "~" show (percent tm tg) ++ "%)"
 >               ]
 >     , ""
 >     , "#Blatt\tPunkte\tvon\tProzent"
@@ -169,12 +145,12 @@ Generate a report in the group's directory
 >       $
 >       zipWith (:) (map (pad 2 '0') [1..])
 >       $
->       zipWith (:) (map (maybe "~" sfr) ps)
+>       zipWith (:) (map (maybe "~" unRat) ps)
 >       $
->       zipWith (:) (map sfr maxPoints)
+>       zipWith (:) (map unRat maxPoints)
 >       $
 >       map (return . maybe "~" (pad 3 ' '))
->           (zipWith percent (map (maybe 0 id) ps) maxPoints)
+>           (zipWith percent maxPoints (map (maybe 0 id) ps))
 >     )
 >     where
 >     tg = sum $ catMaybes ps
@@ -188,14 +164,15 @@ Generate a report in the group's directory
 > mkOverview cfg maxPoints groups ratings
 >   = writeFile (studResultFile cfg) . unlines
 >     $
->     [ "# Punktestand je Student und Abgabe."
->     , concat [ "# reqd = ", show $ reqdPerc cfg, "% = ", sfr reqd
->              , "/", sfr maxTotal
->              , ", failure = ", show fMax, "<"
+>     [ "# Points per student and exercise."
+>     , concat [ "# reqd = ", show $ reqdPerc cfg, "% = ", unRat reqd
+>              , "/", unRat maxTotal
+>              , ", extra lives = ", show fMax, ", death = <"
 >              , show $ failPerc cfg
 >              , "%"
 >              ]
->     , "# <student> <abgabe>* #<erreicht>% <abs. zuviel> <noch fehlversuche>"
+>     , "# Columns: <student> <points>{" ++ show (length maxPoints) ++
+>       "} <passed> # <gained>% <margin> <lives>"
 >     , ""
 >     ]
 >     ++
@@ -207,17 +184,20 @@ Generate a report in the group's directory
 >   reqd = maxTotal * fromIntegral (reqdPerc cfg) / 100
 >   f (s,ps)
 >       = let gained = sum $ catMaybes ps
->             gainedPerc = percent gained maxTotal
+>             gainedPerc = percent maxTotal gained
 >             failed = count id $ zipWith (\m -> maybe (0<m) (<m)) mins ps
+>             margin = gained - reqd
+>             lives = fMax - failed
 >         in uncols
 >            $
 >            s
 >            :
->            map (maybe "~" sfr) ps
+>            map (maybe "~" unRat) ps
 >            ++
->            [ concat [ "#", maybe "0" show gainedPerc, "%" ]
->            , sfr $ gained - reqd
->            , show $ fMax - failed
+>            [ if margin >= 0 && lives >= 0 then "pass" else "FAIL"
+>            , "# " ++ maybe "0" show gainedPerc ++ "%"
+>            , unRat margin
+>            , show lives
 >            ]
 
 
@@ -239,14 +219,14 @@ Generate a report in the group's directory
 > main
 >   = do as <- getArgs
 >        case as of
->          (rf:gd:ff:gf:mp:tp)
+>          (rf:gd:ff:gf:req:fm:fp:mp:tp)
 >            -> report Config{ groupBaseDir = gd
 >                            , feedbackFile = ff
 >                            , groupsFile = gf
 >                            , maxPointsFile = mp
 >                            , studResultFile = rf
 >                            , tutorPointFiles = tp
->                            , reqdPerc = 50
->                            , failPerc = 10
->                            , failMax = 3
+>                            , reqdPerc = read req
+>                            , failPerc = read fp
+>                            , failMax = read fm
 >                            }
