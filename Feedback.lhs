@@ -5,6 +5,7 @@
 > import Data.Maybe ( catMaybes )
 > import Data.List ( intersperse )
 > import System.Environment ( getArgs )
+> import Text.Read ( readMaybe )
 
 
 > type GroupID = String
@@ -12,15 +13,15 @@
 
 > data Config
 >     = Config
->       { groupBaseDir :: String
->       , feedbackFile :: String
->       , groupsFile :: String
->       , maxPointsFile :: String
->       , studResultFile :: String
->       , tutorPointFiles :: [String]
->       , reqdPerc :: Int -- req'd percent for admittance
->       , failPerc :: Int -- min percent per exercise
->       , failMax :: Int -- max failed exercises
+>       { feedbackDir :: String
+>       , feedback :: String
+>       , groups :: String
+>       , maxPoints :: String
+>       , overview :: String
+>       , ratings :: [String]
+>       , reqdTotal :: Int -- req'd percent for admittance
+>       , reqdEach :: Int -- min percent per exercise
+>       , maxLow :: Int -- max failed exercises
 >       }
   
   
@@ -125,10 +126,10 @@ for the same assignment.
 
 Generate a report in the group's directory
 
-> feedback :: Config -> [Rational] -> GroupID -> [Maybe Rational]
+> mkFeedback :: Config -> [Rational] -> GroupID -> [Maybe Rational]
 >          -> IO ()
-> feedback cfg maxPoints g ps
->   = writeFile (groupBaseDir cfg++"/"++g++"/"++feedbackFile cfg) . unlines
+> mkFeedback cfg maxPoints g ps
+>   = writeFile (feedbackDir cfg++"/"++g++"/"++feedback cfg) . unlines
 >     $
 >     [ "# Punkte für Gruppe " ++ show g
 >     , unwords [ "# Gesamt:"
@@ -161,30 +162,52 @@ Generate a report in the group's directory
 > count p = length . filter p
             
 
-> mkOverview cfg maxPoints groups ratings
->   = writeFile (studResultFile cfg) . unlines
+> mkOverview cfg maxPoints limPoints groups ratings
+>   = writeFile (overview cfg) . unlines
 >     $
->     [ "# Points per student and exercise."
->     , concat [ "# reqd = ", show $ reqdPerc cfg, "% = ", unRat reqd
->              , "/", unRat maxTotal
->              , ", extra lives = ", show fMax, ", death = <"
->              , show $ failPerc cfg
->              , "%"
+>     [ "# Points per student and exercise"
+>     , "# (compiled file, do not edit)"
+>     , "#"
+>     , concat [ "# "
+>              , unRat totalReg
+>              , " regular points make up 100%.  Including bonuses, "
+>              , unRat $ sum limPoints
+>              , " points"
 >              ]
->     , "# Columns: <student> <points>{" ++ show (length maxPoints) ++
->       "} <passed> # <gained>% <margin> <lives>"
+>     , concat [ "# are available.  To pass, "
+>              , show $ reqdTotal cfg
+>              , "% = ", unRat reqd
+>              , " points are required, and not"
+>              ]
+>     , concat [ "# more than ", show fMax         
+>              , " exercises may be rated with less than ", show $ reqdEach cfg, " percent locally."
+>              ]
+>     , "#"
+>     , concat [ "# Columns:  <student> <points>{"
+>              , show $ length maxPoints
+>              , "} #<passed> <gained>% <margin> <lives>"
+>              ]
+>     , "#    <student>   ID of the student."
+>     , "#    <points>    Gained points; One entry per assignemt."
+>     , "#    # the rest of the line is a comment."
+>     , "#    <passed>    Whether the student would pass."
+>     , "#    <gained>%   Percentage of regular points gained so far."
+>     , "#    <margin>    How many points above required limit."
+>     , concat [ "#    <lives>     How many more assignments may be rated below "
+>              , show $ reqdEach cfg, "%."
+>              ]
 >     , ""
 >     ]
 >     ++
 >     map f (M.toList $ accumRatings (inverseGroups groups) ratings)
 >   where
->   maxTotal = sum maxPoints
->   mins = map (\p -> p * fromIntegral (failPerc cfg) / 100) maxPoints
->   fMax = failMax cfg
->   reqd = maxTotal * fromIntegral (reqdPerc cfg) / 100
+>   totalReg = sum maxPoints
+>   mins = map (\p -> p * fromIntegral (reqdEach cfg) / 100) maxPoints
+>   fMax = maxLow cfg
+>   reqd = totalReg * fromIntegral (reqdTotal cfg) / 100
 >   f (s,ps)
 >       = let gained = sum $ catMaybes ps
->             gainedPerc = percent maxTotal gained
+>             gainedPerc = percent totalReg gained
 >             failed = count id $ zipWith (\m -> maybe (0<m) (<m)) mins ps
 >             margin = gained - reqd
 >             lives = fMax - failed
@@ -194,8 +217,8 @@ Generate a report in the group's directory
 >            :
 >            map (maybe "~" unRat) ps
 >            ++
->            [ if margin >= 0 && lives >= 0 then "pass" else "FAIL"
->            , "# " ++ maybe "0" show gainedPerc ++ "%"
+>            [ '#' : if margin >= 0 && lives >= 0 then "pass" else "FAIL"
+>            , maybe "0" show gainedPerc ++ "%"
 >            , unRat margin
 >            , show lives
 >            ]
@@ -203,30 +226,54 @@ Generate a report in the group's directory
 
 > report cfg
 >   = do maxBonusPoints <- tableFile' ((,) <$> rational <*> rational)
->                            (maxPointsFile cfg)
+>                            (maxPoints cfg)
 >        let maxPoints = map fst maxBonusPoints -- the 100%
 >            limPoints = map (uncurry (+)) maxBonusPoints -- the limit
->        groups <- readGroupTable $ groupsFile cfg
+>        groups <- readGroupTable $ groups cfg
 >        ratings <- joinRatings <$> mapM (readRatingTable limPoints)
->                                   (tutorPointFiles cfg)
+>                                   (ratings cfg)
 >        assert (M.keysSet ratings `S.isSubsetOf` M.keysSet groups)
 >                 "Ratings is not a submap of groups"
->        mkOverview cfg maxPoints groups ratings
->        mapM_ (uncurry $ feedback cfg maxPoints) . M.toList
+>        mkOverview cfg maxPoints limPoints groups ratings
+>        mapM_ (uncurry $ mkFeedback cfg maxPoints) . M.toList
 >                  $ M.map (fmap $ fmap rat) ratings
 
 
-> main
->   = do as <- getArgs
->        case as of
->          (rf:gd:ff:gf:req:fm:fp:mp:tp)
->            -> report Config{ groupBaseDir = gd
->                            , feedbackFile = ff
->                            , groupsFile = gf
->                            , maxPointsFile = mp
->                            , studResultFile = rf
->                            , tutorPointFiles = tp
->                            , reqdPerc = read req
->                            , failPerc = read fp
->                            , failMax = read fm
->                            }
+> bar arg cfg
+>     = case break (=='=') arg of
+>         (key, '=':val)
+>             -> case key of
+>                "feedbackDir" -> cfg{feedbackDir = val}
+>                "feedback" -> cfg{ feedback = val }
+>                "groups" -> cfg{ groups = val }
+>                "maxPoints" -> cfg{ maxPoints = val }
+>                "overview" -> cfg{ overview = val }
+>                "reqdTotal" -> cfg{ reqdTotal = percent }
+>                "reqdEach" -> cfg{ reqdEach = percent }
+>                "maxLow" -> cfg{ maxLow = integer }
+>                _ -> error $ "Unknown key `"++key++"`"
+>             where
+>             integer
+>                 = maybe (error $ "expected: "++key++"::int") id
+>                   $ readMaybe val
+>             percent
+>                 = if integer < 0 || 100 < integer
+>                   then error $ "expected: "++key++"::percent"
+>                   else integer
+>         
+>         (other,"") -> cfg{ ratings = other : ratings cfg}
+
+
+> nullCfg = Config{ feedbackDir = error "specify dir feedbackDir="
+>                 , feedback = error "specify file feedback="
+>                 , groups = error "specify file groups="
+>                 , maxPoints = error "specify file maxPoints="
+>                 , overview = error "specify file overview="
+>                 , ratings = []
+>                 , reqdTotal = error "specify percentage reqdTotal="
+>                 , reqdEach = error "specify percentage reqdEach="
+>                 , maxLow = error "specify int maxLow="
+>                 }
+                     
+                     
+> main = report =<< foldr bar nullCfg <$> getArgs

@@ -44,7 +44,7 @@ The field parsers                                               M-x orgtbl-mode
 >                , bln, nil, key
 >                , int, integer, rational, double, float
 >                , str, word
->                , pos
+>                , pos, getPosition
 >                , mbNil
 >                , spaces, lexeme
 >                , Parser, SourcePos
