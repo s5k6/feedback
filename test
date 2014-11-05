@@ -1,0 +1,24 @@
+#!/bin/bash
+set -u -e -C;
+shopt -s nullglob;
+
+function err { echo "$@" >&2; exit 1; }
+function warn { echo "$@" >&2; }
+
+function ask_yN {
+    local answer='';
+    read -n 1 -s -p "$* [yN]" answer;
+    if test "${answer}" = y; then
+        echo yes;
+        return 0;
+    fi;
+    echo no;
+    return 1;
+}
+
+./feedback \
+    overview=demo/overview feedback=demo/group/%/punkte \
+    reqdTotal=50 reqdEach=10 maxLow=3 \
+    maxPoints=demo/maxPoints \
+    groups=demo/groups \
+    demo/tut{1,2}/punkte

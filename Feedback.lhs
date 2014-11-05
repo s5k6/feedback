@@ -13,8 +13,7 @@
 
 > data Config
 >     = Config
->       { feedbackDir :: String
->       , feedback :: String
+>       { feedback :: String -> String
 >       , groups :: String
 >       , maxPoints :: String
 >       , overview :: String
@@ -23,10 +22,10 @@
 >       , reqdEach :: Int -- min percent per exercise
 >       , maxLow :: Int -- max failed exercises
 >       }
-  
-  
+ 
+ 
 Store ratings with their position in source.
-      
+ 
 > data Rating = Rating { at :: SourcePos, rat :: Rational }
 
 > instance Show Rating where
@@ -129,7 +128,7 @@ Generate a report in the group's directory
 > mkFeedback :: Config -> [Rational] -> GroupID -> [Maybe Rational]
 >          -> IO ()
 > mkFeedback cfg maxPoints g ps
->   = writeFile (feedbackDir cfg++"/"++g++"/"++feedback cfg) . unlines
+>   = writeFile (feedback cfg g) . unlines
 >     $
 >     [ "# Punkte für Gruppe " ++ show g
 >     , unwords [ "# Gesamt:"
@@ -160,7 +159,7 @@ Generate a report in the group's directory
 
 > count :: (a -> Bool) -> [a] -> Int
 > count p = length . filter p
-            
+ 
 
 > mkOverview cfg maxPoints limPoints groups ratings
 >   = writeFile (overview cfg) . unlines
@@ -179,7 +178,7 @@ Generate a report in the group's directory
 >              , "% = ", unRat reqd
 >              , " points are required, and not"
 >              ]
->     , concat [ "# more than ", show fMax         
+>     , concat [ "# more than ", show fMax
 >              , " exercises may be rated with less than ", show $ reqdEach cfg, " percent locally."
 >              ]
 >     , "#"
@@ -243,8 +242,10 @@ Generate a report in the group's directory
 >     = case break (=='=') arg of
 >         (key, '=':val)
 >             -> case key of
->                "feedbackDir" -> cfg{feedbackDir = val}
->                "feedback" -> cfg{ feedback = val }
+>                "feedback"
+>                    -> case break (=='%') val of
+>                       (d, '%':f) -> cfg{feedback = \g -> d++g++f }
+>                       _ -> error "Please specify feedbackDir=path/%/file"
 >                "groups" -> cfg{ groups = val }
 >                "maxPoints" -> cfg{ maxPoints = val }
 >                "overview" -> cfg{ overview = val }
@@ -260,12 +261,11 @@ Generate a report in the group's directory
 >                 = if integer < 0 || 100 < integer
 >                   then error $ "expected: "++key++"::percent"
 >                   else integer
->         
+>
 >         (other,"") -> cfg{ ratings = other : ratings cfg}
 
 
-> nullCfg = Config{ feedbackDir = error "specify dir feedbackDir="
->                 , feedback = error "specify file feedback="
+> nullCfg = Config{ feedback = error "specify pattern feedback="
 >                 , groups = error "specify file groups="
 >                 , maxPoints = error "specify file maxPoints="
 >                 , overview = error "specify file overview="
@@ -274,6 +274,6 @@ Generate a report in the group's directory
 >                 , reqdEach = error "specify percentage reqdEach="
 >                 , maxLow = error "specify int maxLow="
 >                 }
-                     
-                     
+ 
+ 
 > main = report =<< foldr bar nullCfg <$> getArgs
