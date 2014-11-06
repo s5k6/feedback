@@ -6,6 +6,7 @@
 > import Data.List ( intersperse )
 > import System.Environment ( getArgs )
 > import Text.Read ( readMaybe )
+> import GHC.Exts ( sortWith )
 
 
 > type GroupID = String
@@ -164,65 +165,41 @@ Generate a report in the group's directory
 > mkOverview cfg maxPoints limPoints groups ratings
 >   = writeFile (overview cfg) . unlines
 >     $
->     [ "# Points per student and exercise"
->     , "# (compiled file, do not edit)"
->     , "#"
->     , concat [ "# "
->              , unRat totalReg
->              , " regular points make up 100%.  Including bonuses, "
->              , unRat $ sum limPoints
->              , " points"
->              ]
->     , concat [ "# are available.  To pass, "
->              , show $ reqdTotal cfg
->              , "% = ", unRat reqd
->              , " points are required, and not"
->              ]
->     , concat [ "# more than ", show fMax
->              , " exercises may be rated with less than ", show $ reqdEach cfg, " percent locally."
->              ]
->     , "#"
->     , concat [ "# Columns:  <student> <points>{"
->              , show $ length maxPoints
->              , "} #<passed> <gained>% <margin> <lives>"
->              ]
->     , "#    <student>   ID of the student."
->     , "#    <points>    Gained points; One entry per assignemt."
->     , "#    # the rest of the line is a comment."
->     , "#    <passed>    Whether the student would pass."
->     , "#    <gained>%   Percentage of regular points gained so far."
->     , "#    <margin>    How many points above required limit."
->     , concat [ "#    <lives>     How many more assignments may be rated below "
->              , show $ reqdEach cfg, "%."
->              ]
+>     [ uncols $ ["#", "100%", "req%", "bonus", "min%"] ++ titles
+>     , uncols $ ["#", unRat totalReg, show $ reqdTotal cfg, unRat $ totalBonus, show $ reqdEach cfg] ++ map unRat maxPoints
 >     , ""
+>     , uncols $ ["# student", "pass", "got%", "margin", "lives"] ++ titles
 >     ]
 >     ++
->     map f (M.toList $ accumRatings (inverseGroups groups) ratings)
+>     (map g . reverse . sortWith skey . map f) (M.toList $ accumRatings (inverseGroups groups) ratings)
 >   where
+>   titles = zipWith (\n _ -> "a" ++ show n) [1..] maxPoints
 >   totalReg = sum maxPoints
+>   totalBonus = sum limPoints - totalReg
 >   mins = map (\p -> p * fromIntegral (reqdEach cfg) / 100) maxPoints
 >   fMax = maxLow cfg
 >   reqd = totalReg * fromIntegral (reqdTotal cfg) / 100
+>   skey (student, result, gained, margin, failed, ps) = (gained,result)
+>   g (student, result, gained, margin, lives, ps)
+>       = uncols
+>         $ student : (if result then "yes" else "no") : show gained : unRat margin : show lives : map (maybe "~" unRat) ps
 >   f (s,ps)
 >       = let gained = sum $ catMaybes ps
 >             gainedPerc = percent totalReg gained
 >             failed = count id $ zipWith (\m -> maybe (0<m) (<m)) mins ps
 >             margin = gained - reqd
->             lives = fMax - failed
->         in uncols
->            $
->            s
->            :
->            map (maybe "~" unRat) ps
->            ++
->            [ '#' : if margin >= 0 && lives >= 0 then "pass" else "FAIL"
->            , maybe "0" show gainedPerc ++ "%"
->            , unRat margin
->            , show lives
->            ]
+>         in ( s
+>            , margin >= 0 && failed <= fMax
+>            , maybe 0 id gainedPerc
+>            , margin
+>            , fMax - failed
+>            , ps
+>            )
 
 
+> when c a = if c then a else return undefined
+> unless c = when (not c)
+ 
 > report cfg
 >   = do maxBonusPoints <- tableFile' ((,) <$> rational <*> rational)
 >                            (maxPoints cfg)
@@ -231,8 +208,12 @@ Generate a report in the group's directory
 >        groups <- readGroupTable $ groups cfg
 >        ratings <- joinRatings <$> mapM (readRatingTable limPoints)
 >                                   (ratings cfg)
->        assert (M.keysSet ratings `S.isSubsetOf` M.keysSet groups)
->                 "Ratings is not a submap of groups"
+>        let rks = M.keysSet ratings
+>            gks = M.keysSet groups
+>            unknown = S.toList $ S.difference rks gks
+>            unrated = S.toList $ S.difference gks rks
+>        unless (null unrated) $ error . unwords $ "Unrated groups:" : unrated
+>        unless (null unknown) $ error . unwords $ "Unknown groups:" : unknown
 >        mkOverview cfg maxPoints limPoints groups ratings
 >        mapM_ (uncurry $ mkFeedback cfg maxPoints) . M.toList
 >                  $ M.map (fmap $ fmap rat) ratings
@@ -274,6 +255,6 @@ Generate a report in the group's directory
 >                 , reqdEach = error "specify percentage reqdEach="
 >                 , maxLow = error "specify int maxLow="
 >                 }
- 
- 
+
+
 > main = report =<< foldr bar nullCfg <$> getArgs

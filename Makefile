@@ -1,7 +1,7 @@
 outputdir = out
 targets = feedback grades
 
-.PHONY : all clean distclean
+.PHONY : all clean distclean test
 
 all : $(targets)
 
@@ -22,3 +22,12 @@ clean :
 
 distclean : clean
 	rm -f $(targets)
+
+test : feedback
+	./feedback \
+	  overview=demo/overview feedback=demo/group/%/punkte \
+	  reqdTotal=50 reqdEach=10 maxLow=3 \
+	  maxPoints=demo/maxPoints \
+	  groups=demo/groups \
+	  demo/tut{1,2}
+	less -x30,38 demo/overview
