@@ -1,0 +1,12 @@
+#!/bin/bash
+set -u -e -C;
+shopt -s nullglob;
+
+cd "$(dirname "$0")";
+
+../feedback \
+    overview=total_punkte feedback=group/%/punkte \
+    reqdTotal=50 reqdEach=10 maxLow=3 \
+    maxPoints=max_punkte \
+    groups=groups \
+    tutor{1,2}

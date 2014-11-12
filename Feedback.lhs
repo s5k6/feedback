@@ -7,6 +7,7 @@
 > import System.Environment ( getArgs )
 > import Text.Read ( readMaybe )
 > import GHC.Exts ( sortWith )
+> import qualified Help
 
 
 > type GroupID = String
@@ -22,6 +23,7 @@
 >       , reqdTotal :: Int -- req'd percent for admittance
 >       , reqdEach :: Int -- min percent per exercise
 >       , maxLow :: Int -- max failed exercises
+>       , limAssignments :: Maybe Int
 >       }
  
  
@@ -201,8 +203,10 @@ Generate a report in the group's directory
 > unless c = when (not c)
  
 > report cfg
->   = do maxBonusPoints <- tableFile' ((,) <$> rational <*> rational)
->                            (maxPoints cfg)
+>   = do maxBonusPoints
+>            <- maybe id take (limAssignments cfg)
+>               <$>
+>               tableFile' ((,) <$> rational <*> rational) (maxPoints cfg)
 >        let maxPoints = map fst maxBonusPoints -- the 100%
 >            limPoints = map (uncurry (+)) maxBonusPoints -- the limit
 >        groups <- readGroupTable $ groups cfg
@@ -233,6 +237,7 @@ Generate a report in the group's directory
 >                "reqdTotal" -> cfg{ reqdTotal = percent }
 >                "reqdEach" -> cfg{ reqdEach = percent }
 >                "maxLow" -> cfg{ maxLow = integer }
+>                "lim" -> cfg{ limAssignments = Just integer }
 >                _ -> error $ "Unknown key `"++key++"`"
 >             where
 >             integer
@@ -254,7 +259,12 @@ Generate a report in the group's directory
 >                 , reqdTotal = error "specify percentage reqdTotal="
 >                 , reqdEach = error "specify percentage reqdEach="
 >                 , maxLow = error "specify int maxLow="
+>                 , limAssignments = Nothing
 >                 }
 
 
-> main = report =<< foldr bar nullCfg <$> getArgs
+> main
+>     = do as <- getArgs
+>          if null as
+>          then putStr Help.text
+>          else report =<< foldr bar nullCfg <$> getArgs

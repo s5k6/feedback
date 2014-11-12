@@ -5,9 +5,13 @@ targets = feedback grades
 
 all : $(targets)
 
-feedback : Feedback.lhs Tabular.lhs
-	ghc --make -outputdir $(outputdir) -o feedback Feedback.lhs
+feedback : Feedback.lhs Tabular.lhs out/Help.hs
+	ghc --make -outputdir $(outputdir) -o feedback Feedback.lhs out/Help.hs
 	strip feedback
+
+out/Help.hs : help.txt help.sed
+	mkdir out
+	sed -r -f help.sed help.txt >$@
 
 grades : Grades.lhs Tabular.lhs
 	ghc --make -outputdir $(outputdir) -o grades Grades.lhs
@@ -24,10 +28,5 @@ distclean : clean
 	rm -f $(targets)
 
 test : feedback
-	./feedback \
-	  overview=demo/overview feedback=demo/group/%/punkte \
-	  reqdTotal=50 reqdEach=10 maxLow=3 \
-	  maxPoints=demo/maxPoints \
-	  groups=demo/groups \
-	  demo/tut{1,2}
-	less -x30,38 demo/overview
+	demo/feedback
+	x less -Sx30,38 demo/total_punkte

@@ -1,0 +1,31 @@
+# Kommentare sind der Form #-eol.  Leere Zeilen werden ignoriert.
+# Format der Zeilen:
+
+#     ‹gruppe› ‹punkte1› ‹punkte2› ‹punkte3› ...
+
+# Es reicht aus die Gruppen aufzuzählen die Ihr auch bewertet, die
+# anderen könnt Ihr weglassen.  Wenn Ihr eine Gruppe mal nicht
+# korrigiert, mit `~` markieren, nicht mit `0`.  Das hilft "nicht
+# korrigiert" von "korrigiert aber 0 Punkte" zu unterscheiden.
+# Sinnvoll etwa wenn eine Gruppe zu/von einem anderen Tutor umzieht,
+# oder nix abgibt.
+
+# Blatt Nr: 2    3    4    5	6    7    8    9    10...
+
+001 0  16  10  20
+003 0  13   3  17
+005 0  16   8  20
+007 0  16   9  20
+021 0  15  10  20
+009 0  16   9  20
+023 0  15   7  20
+011 0  16   7  20
+013 0  16   9  18
+025 0  13   9  20
+027 0  14   8  18
+015 0  11   0  15
+029 0  13   0   0
+017 0  14   8  19
+031 0  15   9  20
+033 0  13   8  17
+019 0  15   8  17

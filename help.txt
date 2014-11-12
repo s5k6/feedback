@@ -1,0 +1,12 @@
+
+    feedback \
+        overview={file to store calculated overview}                      \
+        feedback={dir of all groups}/%/{group feedback file}              \
+        reqdTotal={required percentage overall}                           \
+        reqdEach={required percentage per exercise}                       \
+        maxLow={acceptable number of assignments below reqdEach}          \
+        maxPoints={file containing regular and bonus points per exercise} \
+        groups={file containing the group definitions}                    \
+      [ lim={number of assignments to consider}                           \ ]
+        {tutor's points file}*
+

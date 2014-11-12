@@ -25,7 +25,7 @@ The field parsers                                               M-x orgtbl-mode
   |          |          | sequences currently include \t, \n, \\, \".   |
   |----------+----------+-----------------------------------------------|
   | word     | String   | A String not enclosed in double quotes. No    |
-  |          |          | escaping allowed. Must start with a letter    |
+  |          |          | escaping allowed. May start with a digit.     |
   |----------+----------+-----------------------------------------------|
   | bln      | Boolean  | The word "True" or "false".                   |
   |----------+----------+-----------------------------------------------|
@@ -48,12 +48,13 @@ The field parsers                                               M-x orgtbl-mode
 >                , mbNil
 >                , spaces, lexeme
 >                , Parser, SourcePos
->                , uncols, unRat, assert, percent, pad  
+>                , uncols, unRat, assert, percent, pad
 >                ) where
 
 
 > import Text.ParserCombinators.Parsec hiding ( (<|>), many, spaces, space )
 > import Control.Applicative
+> import Control.Monad (void )
 > import Data.Char ( digitToInt )
 > import Data.Ratio
 > import Data.List ( intersperse )
@@ -63,15 +64,20 @@ The field parsers                                               M-x orgtbl-mode
 Spaces, delimiters and newlines
 
 
-> space = oneOf " \t" -- not newline!
+`space` does not include newline, which is a field separator.  But we
+add the BOM which (unnecessarily) may be added to UTF-8 files by MS
+products.
+
+> space = oneOf " \t\65279"
+
 > spaces = many space
 
 > lexeme :: Parser a -> Parser a
 > lexeme p = p <* spaces
 
-> nl = lexeme newline >> return ()
-> comment = lexeme $ char '#' >> manyTill anyChar newline >> return ()
-> eol = many1 $ comment <|> nl
+> nl = void $ lexeme newline
+> comment = void . lexeme $ char '#' >> manyTill anyChar (void newline <|> eof)
+> eol = void (many1 $ comment <|> nl)
 
 
 --------------------------------------------------------------------------------
@@ -165,7 +171,7 @@ Parse a decimal Relational. Digests ‘+1.23’ and ‘-2/5’.
 >       <*>
 >       do n <- integral 10 . map toRational <$> digits1
 >          choice [ char '.' >> (n+) . places 10 . map toRational <$> digits1
->                 , char '/' >> (n/) . integral 10 . map toRational <$> digits1 
+>                 , char '/' >> (n/) . integral 10 . map toRational <$> digits1
 >                 , return $ n
 >                 ]
 
@@ -193,7 +199,7 @@ recognised.
 Parse a Nil value.
 
 > nil :: Parser ()
-> nil = lexeme $ char '~' >> return ()
+> nil = void . lexeme $ char '~'
 
 
 Shorthand for Nil-or-Something parsers.
@@ -206,14 +212,14 @@ Shorthand for Nil-or-Something parsers.
 Parse a given keyword.
 
 > key :: String -> Parser ()
-> key k = lexeme $ string k >> notFollowedBy alphaNum >> return ()
+> key k = void . lexeme $ string k >> notFollowedBy alphaNum
 
 
 
 Parse a word, i.e., a String not delimited by double quotes
 
 > word :: Parser String
-> word = lexeme $ (:) <$> letter <*> many (noneOf " \t\n\\\"")
+> word = lexeme $ (:) <$> (letter <|> digit) <*> many (noneOf " \t\n\\\"")
 
 
 
@@ -226,17 +232,17 @@ Parse something, and augment it with the position in the source code.
 --------------------------------------------------------------------------------
 Helper functions
 
-       
+
 > assert p msg
 >   = if p then return () else fail msg
 
 
-> uncols = concat . intersperse "\t"        
+> uncols = concat . intersperse "\t"
 
- 
+
 > unRat = show . fromRational
 
-  
+
 > pad n c
 >   = reverse . fill n . reverse . show
 >   where
@@ -244,14 +250,14 @@ Helper functions
 >   fill k (x:xs) = x : fill (k-1) xs
 >   fill k [] = replicate k c
 
-    
+
 > percent :: Rational -> Rational -> Maybe Int
 > percent all frac
 >   = if all > 0
 >     then Just . floor . fromRational $ frac / all * 100
 >     else Nothing
 
-         
+
 ================================================================================
 Example section
 
