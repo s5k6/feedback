@@ -1,12 +1,101 @@
 
+Synopsis
+
     feedback \
-        overview={file to store calculated overview}                      \
-        feedback={dir of all groups}/%/{group feedback file}              \
+        overview={overview file}                      \
+        feedback={individual feedback file pattern}                       \
         reqdTotal={required percentage overall}                           \
         reqdEach={required percentage per exercise}                       \
         maxLow={acceptable number of assignments below reqdEach}          \
         maxPoints={file containing regular and bonus points per exercise} \
-        groups={file containing the group definitions}                    \
+        groups={groups definition file}                                   \
       [ lim={number of assignments to consider}                           \ ]
         {tutor's points file}*
 
+
+Output
+
+  * For each group found in the {groups definition file}, an overview
+    of gained points will be written into a file matching the
+    {individual feedback file pattern}, with the mandatory `%`
+    replaced by the groups name.
+
+    The format is one line per assignment, showing the assignment
+    number, points gained, the points required for 100%, and the
+    percentage gained.  A `~` indicates that no rating has happened,
+    or div/zero for the percentage.
+
+    The header comment contains the overall percentage.
+
+[ requested feature: Give students individual percentage, if member of
+different groups ]
+
+  * For each student found in the {groups definition file}, an
+    overview of gained points will be written into the {overview
+    file}.
+
+    The format is one line per student, showing the student
+    identifier, whether he passes, the achieved percent, the margin of
+    points above failure, the maximum number of further exercises he
+    may fail, and a list of gained points (or `~` if no grading has
+    happened).
+
+    The header comment contains the points required to achieve 100%,
+    the required percentage to pass, the total number of available
+    bonus points, the minimum percentage required per assignment, and
+    a listing of the regular points available in the individual
+    exercises.
+
+
+Input
+
+  * The {groups definition file} file has the format
+
+        ‹group› ‹flag› ‹member›*
+
+    Where ‹group› is the group's name, ‹flag› indicates the assigned
+    tutorial or `~` if none, and ‹member› is the member's
+    identification, usually the university email address.
+
+  * A student is marked FAILED if the gained points (including bonus
+    points) are below the {required percentage per exercise},
+    calculated from the regular points available (excluding bonus
+    points).
+
+[rework from here ...
+
+
+  * A student is marked FAILED if more than ‹failMax› exercises have
+    been rated (including bonus points) with less than ‹minEach›
+    percent of the regular points (excluding bonus points) available
+    in this exercise.
+
+  * The file ‹Max› contains one line per assignment, showing the
+    number of points required to achieve 100%, and the number of
+    available bonus points.  This file determines the number of
+    assignments.
+
+  * Each tutor provides a file ‹Rating› with the following format:
+
+        ‹group› ‹gained›*
+
+    Where ‹group› identifies a group, and ‹gained› is the amount of
+    points for the corresponding exercise.  ‹gained› may be `~` iff no
+    grading has happened (maybe the group is closed).
+
+
+Consistency checks performed
+
+  * A student cannot gain points from different groups for the same
+    tutorial.
+
+  * A group cannot be rated more than once by different tutors for the
+    same assignment.
+
+  * Per rating, a tutor cannot grant more than the points required for
+    100% plus the bonus points.
+
+  * In the tutor's rating files, there must be at least one entry for
+    every group and every assignment (there may be additional ones).
+
+]

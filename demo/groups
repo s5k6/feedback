@@ -1,0 +1,50 @@
+# Format: <group> <flag> <member>+
+# Groups are immutable.
+# Set tutor to ~ to disable group
+#
+# Flag: A - Tutor: alice.allison
+#       B - Tutor: bob.bobbington
+#       ~ - Gruppe geschlossen, keine Schreibrechte mehr
+#       ? - Neue Gruppe, noch kein Tutor zugewiesen.
+#
+# Tags: #not2 - not exactly two members
+#       #arti - artificially created
+#       #close - close this group
+#       #forsaken - left by partner
+#
+# (Names taken from James Joyce's novel Ulysses)
+
+001 A  martin.cunningham gerty.macdowell
+002 B  councillor.nannetti ned.lambert
+003 A  haines jacky.caffrey
+004 B  sara.goulding bella.cohen
+006 A  bantam.lyons richie.goulding
+005 B  madden florry.talbot j.j.o-molloy      #not2
+007 A  john.henry.menton nurse.callan
+009 B  barney.kiernan walter.goulding
+010 A  jack.power dr.dixon
+013 B  kitty.ricketts cyril.sargent
+014 A  lieutenant.gardner maggy.dedalus
+015 B  lenehan katey.dedalus
+016 A  mrs.bellingham john.hooper
+019 B  simon.dedalus milly.bloom
+020 A  tommy.caffrey bob.doran
+022 B  cissy.caffrey john.eglinton
+029 A  nameless.narrator patrick.dignam.jr
+032 B  mary.driscoll garrett.deasy
+033 A  may.golding.dedalus patrick.dignam
+034 B  myles.crawford dilly.dedalus
+008 A  buck.mulligan edy.boardman
+023 B  martha.clifford denis.breen
+011 A  molly.bloom the.citizen
+012 B  mina.kennedy boody.dedalus
+017 A  leopold.bloom vincent.lynch
+024 B  ben.dollard richard.best
+018 A  private.compton thomas.w.lyster
+025 B  mervyn.talboys yelverton.barry
+021 A  zoe.higgins blazes.boylan
+026 B  josie.breen private.carr
+030 A  punch.costello john.conmee
+027 B  mrs.dignam george.william.russell
+031 A  stephen.dedalus lydia.douce
+028 B  corny.kelleher joe.hynes

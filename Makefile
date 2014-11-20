@@ -9,6 +9,9 @@ feedback : Feedback.lhs Tabular.lhs Literal.lhs help.txt
 	ghc --make -outputdir $(outputdir) -o feedback Feedback.lhs
 	strip feedback
 
+Literal.lhs : help.txt
+	touch $@
+
 grades : Grades.lhs Tabular.lhs
 	ghc --make -outputdir $(outputdir) -o grades Grades.lhs
 	strip grades
