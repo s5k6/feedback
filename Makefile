@@ -5,13 +5,9 @@ targets = feedback grades
 
 all : $(targets)
 
-feedback : Feedback.lhs Tabular.lhs out/Help.hs
-	ghc --make -outputdir $(outputdir) -o feedback Feedback.lhs out/Help.hs
+feedback : Feedback.lhs Tabular.lhs Literal.lhs help.txt
+	ghc --make -outputdir $(outputdir) -o feedback Feedback.lhs
 	strip feedback
-
-out/Help.hs : help.txt help.sed
-	mkdir out
-	sed -r -f help.sed help.txt >$@
 
 grades : Grades.lhs Tabular.lhs
 	ghc --make -outputdir $(outputdir) -o grades Grades.lhs

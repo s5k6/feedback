@@ -7,7 +7,7 @@
 > import System.Environment ( getArgs )
 > import Text.Read ( readMaybe )
 > import GHC.Exts ( sortWith )
-> import qualified Help
+> import qualified Literal
 
 
 > type GroupID = String
@@ -266,5 +266,5 @@ Generate a report in the group's directory
 > main
 >     = do as <- getArgs
 >          if null as
->          then putStr Help.text
+>          then putStr Literal.help
 >          else report =<< foldr bar nullCfg <$> getArgs
