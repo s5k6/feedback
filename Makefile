@@ -29,4 +29,3 @@ distclean : clean
 
 test : feedback
 	demo/feedback
-	x less -Sx30,38 demo/total_punkte

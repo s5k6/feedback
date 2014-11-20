@@ -9,4 +9,6 @@ cd "$(dirname "$0")";
     reqdTotal=50 reqdEach=10 maxLow=3 \
     maxPoints=max_punkte \
     groups=groups \
-    tutor{1,2}
+    alice.allison bob.bobbington
+
+less -S -x30,40 total_punkte
