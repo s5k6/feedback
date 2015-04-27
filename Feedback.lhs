@@ -155,6 +155,11 @@ Generate a report in the group's directory
 >       map (return . maybe "~" (pad 3 ' '))
 >           (zipWith percent maxPoints (map (maybe 0 id) ps))
 >     )
+>     ++
+>     [ ""
+>     , "# Einzelne Mitglieder haben ggf. weitere Punkte aus anderen Gruppen."
+>     , "# Diese Datei wird regelmässig automatisch überschrieben."
+>     ]
 >     where
 >     tg = sum $ catMaybes ps
 >     tm = sum maxPoints
