@@ -186,7 +186,7 @@ Generate a report in the group's directory
 >   mins = map (\p -> p * fromIntegral (reqdEach cfg) / 100) maxPoints
 >   fMax = maxLow cfg
 >   reqd = totalReg * fromIntegral (reqdTotal cfg) / 100
->   skey (student, result, gained, margin, failed, ps) = (gained, failed)
+>   skey (student, result, gained, margin, failed, ps) = (margin, failed, student)
 >   g (student, result, gained, margin, lives, ps)
 >       = uncols
 >         $ student : (if result then "pass" else "fail") : (show gained ++ "%") : ((if margin >= 0 then ('+':) else id) (unRat margin)) : show lives : map (maybe "~" unRat) ps
