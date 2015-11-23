@@ -22,8 +22,8 @@
  >       , failPerc :: Int -- min percent per exercise
  >       , failMax :: Int -- max failed exercises
  >       }
-  
-  
+ 
+ 
 
 Parse one rating (rational), check range 0–hi.
 
@@ -222,26 +222,31 @@ Available grades, excluding failure.
 > grades :: [Rational]
 > grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0]
 
-      
+ 
 > maxPoints :: [Rational]
-> maxPoints = [2,7,4,6,6,4,7,5,6]
+> maxPoints = [2,2,3,3,2,11,5,7,6,8,12]
 
 > maxTotal :: Rational
 > maxTotal = sum maxPoints
 
 > limTopgrade :: Rational
-> limTopgrade = 42 -- 43.5 -- fromIntegral . floor $ 0.9 * maxTotal
+> limTopgrade = 54.9 -- fromIntegral . floor $ 0.9 * maxTotal
 
 
 Distance between grades in points (assuming equidistant grades):
-           
-> step = 2.5
+ 
+ > step = 2.5
+
+ > step = 3
+
+> step = (limTopgrade - 30) / fromIntegral (length grades - 1)
+
 
 Limit to get a grade:
-  
+ 
 > limits = iterate (subtract step) limTopgrade
 
-   
+ 
 Determine grade by points gained
 
 > scale = zip limits grades
@@ -251,20 +256,21 @@ Determine grade by points gained
 
 
 
-  
-      
+ 
+ 
 > main
 >   = do (a:as) <- getArgs
 >        points <- readPoints maxPoints a
->                  
+>
 >        putStrLn $ "maxTotal="++unRat maxTotal
+>        putStrLn $ "step="++unRat step
 
 >        putStrLn "--- scale ---"
 >        mapM_ g scale
->              
+>
 >        putStrLn "--- grades ---"
 >        mapM_ f $ M.toList points
->                  
+>
 >        return ()
 >   where
 >   f (mn, ps) = putStrLn $ unwords [show mn, unRat p, unRat $ grade p]
