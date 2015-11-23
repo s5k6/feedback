@@ -172,8 +172,8 @@ Generate a report in the group's directory
 > mkOverview cfg maxPoints limPoints groups ratings
 >   = writeFile (overview cfg) . unlines
 >     $
->     [ uncols $ ["#", "100%", "req%", "bonus", "min%"] ++ titles
->     , uncols $ ["#", unRat totalReg, show $ reqdTotal cfg, unRat $ totalBonus, show $ reqdEach cfg] ++ map unRat maxPoints
+>     [ uncols $ ["#", "100%", "req", "bonus", "min"] ++ titles
+>     , uncols $ ["#", unRat totalReg, show (reqdTotal cfg) ++ "%", unRat $ totalBonus, show (reqdEach cfg) ++ "%"] ++ map unRat maxPoints
 >     , ""
 >     , uncols $ ["# student", "pass", "got%", "margin", "lives"] ++ titles
 >     ]
