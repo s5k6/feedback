@@ -221,7 +221,7 @@ Generate a report in the group's directory
 >            gks = M.keysSet groups
 >            unknown = S.toList $ S.difference rks gks
 >            unrated = S.toList $ S.difference gks rks
->        unless (null unrated) $ error . unwords $ "Unrated groups:" : unrated
+>        unless (null unrated) $ putStrLn . unwords $ "Unrated groups:" : unrated
 >        unless (null unknown) $ error . unwords $ "Unknown groups:" : unknown
 >        mkOverview cfg maxPoints limPoints groups ratings
 >        mapM_ (uncurry $ mkFeedback cfg maxPoints) . M.toList
