@@ -57,7 +57,7 @@ Parse a file of ratings, make sure each is within the valid range.
 >   = M.fromListWithKey f
 >     <$>
 >     tableFile'
->     ((,) <$> word <*> (sequence $ map rating maxPoints)
+>     ((,) <$> (word <|> str) <*> (sequence $ map rating maxPoints)
 >      <* many (mbNil rational) -- ignore excessive ratings!
 >     )
 >     t
@@ -74,7 +74,7 @@ Read the group definitions from a file.  Format is
 >   = M.fromListWithKey f
 >     <$>
 >     tableFile'
->     ((\g s ms -> (g,(s,ms))) <$> word <*> mbNil word <*> many word)
+>     ((\g s ms -> (g,(s,ms))) <$> (word <|> str) <*> mbNil word <*> many word)
 >     fn
 >     where
 >     f k _ _ = error $ "Group "++show k++" repeated in "++fn++"."
