@@ -175,7 +175,7 @@ Generate a report in the group's directory
 >     [ uncols $ ["#", "100%", "req", "bonus", "min"] ++ titles
 >     , uncols $ ["#", unRat totalReg, show (reqdTotal cfg) ++ "%", unRat $ totalBonus, show (reqdEach cfg) ++ "%"] ++ map unRat maxPoints
 >     , ""
->     , uncols $ ["# student", "pass", "got%", "margin", "lives"] ++ titles
+>     , uncols $ ["# student", "state", "got%", "margin", "lives"] ++ titles
 >     ]
 >     ++
 >     (map g . reverse . sortWith skey . map f) (M.toList $ accumRatings (inverseGroups groups) ratings)

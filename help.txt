@@ -6,7 +6,7 @@ Synopsis
         feedback={individual feedback file pattern}                       \
         reqdTotal={required percentage overall}                           \
         reqdEach={required percentage per exercise}                       \
-        maxLow={acceptable number of assignments below reqdEach}          \
+        maxLow={acceptable number of failed exercises}                    \
         maxPoints={file containing regular and bonus points per exercise} \
         groups={groups definition file}                                   \
       [ lim={number of assignments to consider}                           \ ]
@@ -57,31 +57,33 @@ Input
     tutorial or `~` if none, and ‹member› is the member's
     identification, usually the university email address.
 
-  * A student is marked FAILED if the gained points (including bonus
-    points) are below the {required percentage per exercise},
+  * The {file containing regular and bonus points per exercise} has
+    one line per exercise, column one holds the regular points
+    (sufficient to achieve 100%), column two holds the additional
+    bonus points.  This file determines the number of assignments.
+
+  * An exercise is considered FAILED if the gained points (including
+    bonus points) are below the {required percentage per exercise},
     calculated from the regular points available (excluding bonus
     points).
 
-[rework from here ...
+  * A student is marked FAILED if more than the {acceptable number of
+    failed exercises} have occurred.  This failure is final.
 
+  * A student is marked FAILED if less than the {required percentage
+    overall} has been reached, calculated from the regular points
+    available (excluding bonus points).  This failure may be
+    temporary, since it can be fixed in subsequent exercises.
 
-  * A student is marked FAILED if more than ‹failMax› exercises have
-    been rated (including bonus points) with less than ‹minEach›
-    percent of the regular points (excluding bonus points) available
-    in this exercise.
-
-  * The file ‹Max› contains one line per assignment, showing the
-    number of points required to achieve 100%, and the number of
-    available bonus points.  This file determines the number of
-    assignments.
-
-  * Each tutor provides a file ‹Rating› with the following format:
+  * Each tutor provides a {tutor's points file} with the following
+    format:
 
         ‹group› ‹gained›*
 
     Where ‹group› identifies a group, and ‹gained› is the amount of
     points for the corresponding exercise.  ‹gained› may be `~` iff no
-    grading has happened (maybe the group is closed).
+    grading has happened (maybe the group is closed), or that
+    particular assignment has been reviewed by another tutor.
 
 
 Consistency checks performed
@@ -92,10 +94,9 @@ Consistency checks performed
   * A group cannot be rated more than once by different tutors for the
     same assignment.
 
-  * Per rating, a tutor cannot grant more than the points required for
-    100% plus the bonus points.
+  * Per rating, a tutor cannot grant more than the regular points plus
+    the bonus points.
 
   * In the tutor's rating files, there must be at least one entry for
     every group and every assignment (there may be additional ones).
 
-]

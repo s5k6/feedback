@@ -161,7 +161,7 @@ Parse a decimal Integer.
 
 
 
-Parse a decimal Relational. Digests ‘+1.23’ and ‘-2/5’.
+Parse a decimal Rational. Digests ‘+1.23’ and ‘-2/5’.
 
 > rational :: Parser Rational
 > rational
