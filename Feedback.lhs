@@ -97,7 +97,7 @@ Zip two lists of `Maybe`s, where at most one partner is `Just` in each pair.
 
 > zipDisjoint :: Show a => [Maybe a] -> [Maybe a] -> [Maybe a]
 > zipDisjoint (Just x : _) (Just y : _)
->   = error $ "Conflicting values " ++ show x ++ ", " ++ show y ++ " found."
+>   = error $ "Conflicting ratings found:\n\t" ++ show x ++ "\n\t" ++ show y
 > zipDisjoint (x:xs) (y:ys) = (x <|> y) : zipDisjoint xs ys
 > zipDisjoint xs ys = xs ++ ys
 
@@ -167,7 +167,7 @@ Generate a report in the group's directory
 
 > count :: (a -> Bool) -> [a] -> Int
 > count p = length . filter p
- 
+
 
 > mkOverview cfg maxPoints limPoints groups ratings
 >   = writeFile (overview cfg) . unlines
@@ -206,7 +206,7 @@ Generate a report in the group's directory
 
 > when c a = if c then a else return undefined
 > unless c = when (not c)
- 
+
 > report cfg
 >   = do maxBonusPoints
 >            <- maybe id take (limAssignments cfg)

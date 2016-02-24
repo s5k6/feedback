@@ -4,7 +4,7 @@ shopt -s nullglob;
 
 cd "$(dirname "$0")";
 
-# generate group directories if they do not exist
+# Only for demo: Generate group directories if they do not exist
 if ! test -d group; then
     sed -r 's/#.*//;/^\s*$/d;s/^(\S+)\s.*$/\1/' groups | while read grp; do
         mkdir -p "group/${grp}";
@@ -17,6 +17,6 @@ fi;
     maxPoints=max_punkte \
     groups=groups \
     $(test "${1:-}" && echo "lim=${1}" || true) \
-    alice.allison bob.bobbington
+    tutor-{a,b}.points
 
 less -S -x30,40 punktestand

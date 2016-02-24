@@ -8,33 +8,33 @@ about how to combine these.
 
 The field parsers                                               M-x orgtbl-mode
 
-  | Parser   | Type     | Description                                   |
-  |----------+----------+-----------------------------------------------|
-  | integer  | Integer  | a non-empty sequence of digits                |
-  | int      | Int      | optionally started by + or -                  |
-  |----------+----------+-----------------------------------------------|
-  | rational | Rational | An Integer Ratio, may be specified as decimal |
-  |          |          | fraction 0.4, or with a slash 2/5, both       |
-  |          |          | representing the same value. Optional sign    |
-  |          |          | allowed as Prefix                             |
-  |----------+----------+-----------------------------------------------|
-  | double   | Double   | Inexact versions of rational.                 |
-  | float    | Float    |                                               |
-  |----------+----------+-----------------------------------------------|
-  | str      | String   | A String enclosed in double quotes, escape    |
-  |          |          | sequences currently include \t, \n, \\, \".   |
-  |----------+----------+-----------------------------------------------|
-  | word     | String   | A String not enclosed in double quotes. No    |
-  |          |          | escaping allowed. May start with a digit.     |
-  |----------+----------+-----------------------------------------------|
-  | bln      | Boolean  | The word "True" or "false".                   |
-  |----------+----------+-----------------------------------------------|
-  | nil      | ()       | The word "~".                                 |
-  |----------+----------+-----------------------------------------------|
-  | key x    | ()       | Expects the given keyword x, e.g., key "foo". |
-  |----------+----------+-----------------------------------------------|
-  | pos f p  | a        | Applies `f` to SourcePos and value from p     |
-  |----------+----------+-----------------------------------------------|
+  | Parser   | Type     | Description                                    |
+  |----------+----------+------------------------------------------------|
+  | integer  | Integer  | a non-empty sequence of digits                 |
+  | int      | Int      | optionally started by + or -                   |
+  |----------+----------+------------------------------------------------|
+  | rational | Rational | An Integer Ratio, may be specified as decimal  |
+  |          |          | fraction 0.4, or with a slash 2/5, both        |
+  |          |          | representing the same value. Optional sign     |
+  |          |          | allowed as Prefix                              |
+  |----------+----------+------------------------------------------------|
+  | double   | Double   | Inexact versions of rational.                  |
+  | float    | Float    |                                                |
+  |----------+----------+------------------------------------------------|
+  | str      | String   | A String enclosed in double quotes, escape     |
+  |          |          | sequences currently include \t, \n, \\, \".    |
+  |----------+----------+------------------------------------------------|
+  | word     | String   | A String not enclosed in double quotes. No     |
+  |          |          | escaping allowed. Must not start with a digit. |
+  |----------+----------+------------------------------------------------|
+  | bln      | Boolean  | The word "True" or "false".                    |
+  |----------+----------+------------------------------------------------|
+  | nil      | ()       | The word "~".                                  |
+  |----------+----------+------------------------------------------------|
+  | key x    | ()       | Expects the given keyword x, e.g., key "foo".  |
+  |----------+----------+------------------------------------------------|
+  | pos f p  | a        | Applies `f` to SourcePos and value from p      |
+  |----------+----------+------------------------------------------------|
 
 
 ================================================================================
@@ -219,7 +219,7 @@ Parse a given keyword.
 Parse a word, i.e., a String not delimited by double quotes
 
 > word :: Parser String
-> word = lexeme $ (:) <$> (letter <|> digit) <*> many (noneOf " \t\n\\\"")
+> word = lexeme $ (:) <$> letter <*> many (noneOf " \t\n\\\"")
 
 
 
