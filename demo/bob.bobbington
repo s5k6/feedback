@@ -1,31 +1,28 @@
-# Kommentare sind der Form #-eol.  Leere Zeilen werden ignoriert.
-# Format der Zeilen:
+#BlattNr: 1 2   3   4   5     6   7   8     9   10  11  12  13
 
-#     ‹gruppe› ‹punkte1› ‹punkte2› ‹punkte3› ...
-
-# Es reicht aus die Gruppen aufzuzählen die Ihr auch bewertet, die
-# anderen könnt Ihr weglassen.  Wenn Ihr eine Gruppe mal nicht
-# korrigiert, mit `~` markieren, nicht mit `0`.  Das hilft "nicht
-# korrigiert" von "korrigiert aber 0 Punkte" zu unterscheiden.
-# Sinnvoll etwa wenn eine Gruppe zu/von einem anderen Tutor umzieht,
-# oder nix abgibt.
-
-# Blatt Nr: 1    2    3    4    5    6    7    8    9    10...
-
-002    0	 16   10   20
-004    0	 15   6	   15
-006    0	 11   8	   4
-008    0	 14   8	   18
-024    0	 10   ~	   ~
-010    0	 14   10   6
-012    0	 15   9	   14
-014    0	 14   10   18
-016    0	 16   10   19
-022    0	 15   10   13
-026    0	 5    10   10
-028    0	 4    9	   14
-030    0	 4    8	   16
-032    0	 16   9	   16
-034	   0	 12   10   16
-018    0	 16   10   18
-020    0	 15   10   19
+vogtmeye  0 16  10  18  12    22  17  11    19  17  10  17  18
+wolfbach  0 16  ~   ~   ~     ~   ~   ~     ~   ~   ~   ~   ~
+frankrau   0 9   6   10  13.5  5   12  11    11  0   0   0   0
+thommuel  0 11  8   11  7     7   14  12    15  5   1   11  9
+kellkrae  0 16  9   18  18    20  17  12    19  5   0   15  18
+winkkoen  0 16  7   17  17    22  17  11    19  10  2   15  0
+kaismuel  0 0   0   0   ~     ~   ~   ~     ~   ~   ~   ~   ~
+rothfrie  ~ 0   9   17  9     15  14  0     11  0   0   0   10
+kraekrue  0 16  10  16  18    22  18  12    6   19  0   0   0
+webehoff  0 16  10  10  13    20  16  11.5  19  13  0   16  13
+arnokuhn  0 0   0   0   ~     ~   ~   ~     ~   ~   ~   ~   ~
+kuhnrich  0 13  10  18  14    7   18  12    15  8   0   0   0
+weismeie  0 14  6   13  16    12  17  6     17  17  0   6   2
+brameybac ~ ~   ~   ~   ~     12  15  12    19  ~   ~   ~   ~
+brauschm  0 14  9   16  13    ~   ~   ~     ~   ~   ~   ~   ~
+braumeye  ~ ~   ~   ~   ~     ~   ~   ~     ~   0   10  17  ~
+lehmhoff  0 14  10  17  11    14  17  9     16  0   0   0   4
+lorejung  0 15  8   14  16    20  9   11    15  16  2   11  8
+guensand  0 16  9   14  12    10  18  4     19  11  0   11  0
+koehwagn  0 14  9   9   3     0   18  0     0   0   ~   ~   ~
+bachfrie  ~ ~   10  14  16    22  12  11    19  12  0   14  0
+simoschm  0 16  8   14  15    22  17  6     6   11  10  13  0
+schrschm  0 13  8   10  16    9   11  5     15  0   2   10  3
+frieklei  0 6   ~   ~   ~     ~   ~   ~     ~   ~   ~   ~   ~
+fuchalbr  0 0   6   4   6.5   15  14  0     12  0   1   0   0
+neumschm    0 14  8   17  17    20  16  12    19  7   9   17  11

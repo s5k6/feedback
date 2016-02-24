@@ -1,31 +1,32 @@
-# Kommentare sind der Form #-eol.  Leere Zeilen werden ignoriert.
-# Format der Zeilen:
+# Blatt Nr: 1   2   3   4   5   6   7   8   9   10  11  12  13
 
-#     ‹gruppe› ‹punkte1› ‹punkte2› ‹punkte3› ...
-
-# Es reicht aus die Gruppen aufzuzählen die Ihr auch bewertet, die
-# anderen könnt Ihr weglassen.  Wenn Ihr eine Gruppe mal nicht
-# korrigiert, mit `~` markieren, nicht mit `0`.  Das hilft "nicht
-# korrigiert" von "korrigiert aber 0 Punkte" zu unterscheiden.
-# Sinnvoll etwa wenn eine Gruppe zu/von einem anderen Tutor umzieht,
-# oder nix abgibt.
-
-# Blatt Nr: 2    3    4    5	6    7    8    9    10...
-
-001 0  16  10  20
-003 0  13   3  17
-005 0  16   8  20
-007 0  16   9  20
-021 0  15  10  20
-009 0  16   9  20
-023 0  15   7  20
-011 0  16   7  20
-013 0  16   9  18
-025 0  13   9  20
-027 0  14   8  18
-015 0  11   0  15
-029 0  13   0   0
-017 0  14   8  19
-031 0  15   9  20
-033 0  13   8  17
-019 0  15   8  17
+becklang    0   13  10  18  18  22  18  12  16  17  0   0   0
+meiewurs    0   14  0   12  9   16  14  ~   ~   ~   ~   ~   ~
+petelang    0   12  9   15  12  19  16  5   16  15  2   11  5
+seidhofm    0   13  7   14  17  17  14  12  15  4   1   14  14
+buscberg    0   15  10  16  16  20  17  ~   ~   ~   ~   ~   ~
+kruebeck    0   12  9   16  13  18  15  5   15  13  2   12  11
+schwwebe    0   16  10  10  18  0   18  11  15  17  10  15  0
+wagnschr    0   8   10  16  7   3   0   0   0   0   0   0   0
+ludwstei    0   15  9   13  5   2   12  3   15  10  2   14  0
+kochsand    0   0   0   14  9   13  17  5   12  9   9   13  9
+jansjung    0   12  7   7   14  12  0   3   9   2   0   8   0
+waltberg    0   12  8   14  13  8   8   0   7   0   0   0   0
+petersen    ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
+branberg    0   0   0   0   0   0   0   0   0   0   0   0   0
+schrgros    0   15  8   13  11  11  17  6   15  10  0   10  0
+schamaye    0   13  9   13  15  9   10  7   10  0   2   12  3
+baumschu    0   16  9   14  8   13  4   4   0   5   2   12  11
+meyebach    0   16  9   15  12  ~   ~   ~   ~   ~   ~   ~   ~
+koensaue    0   12  7   15  11  8   14  6   10  5   2   10  10
+zimmhahn    0   13  9   13  0   0   16  11  15  6   2   13  0
+janspete    0   12  10  14  9   13  14  ~   ~   ~   ~   ~   ~
+petevoge    0   9   10  15  17  10  0   11  16  5   0   15  ~
+krakoesch   0   14  8   16  17  18  11  ~   ~   ~   ~   ~   ~
+fuchbaue    0   0   10  15  11  12  12  10  15  9   6   17  11
+jansschn    ~   ~   ~   ~   ~   ~   ~   4   16  2   4   10  6
+kraukoeh    ~   ~   ~   ~   ~   ~   ~   0   10  ~   ~   ~   ~
+buscmeie    ~   ~   ~   ~   ~   ~   ~   11  16  19  9   16  13
+koehbach    ~   ~   ~   ~   ~   ~   ~   ~   ~   0   0   12  5
+krause      ~   ~   ~   ~   ~   ~   ~   ~   ~   0   0   0   0
+vogbramey   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   7

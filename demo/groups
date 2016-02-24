@@ -1,50 +1,59 @@
-# Format: <group> <flag> <member>+
-# Groups are immutable.
-# Set tutor to ~ to disable group
-#
-# Flag: A - Tutor: alice.allison
-#       B - Tutor: bob.bobbington
-#       ~ - Gruppe geschlossen, keine Schreibrechte mehr
-#       ? - Neue Gruppe, noch kein Tutor zugewiesen.
-#
-# Tags: #not2 - not exactly two members
-#       #arti - artificially created
-#       #close - close this group
-#       #forsaken - left by partner
-#
-# (Names taken from James Joyce's novel Ulysses)
+# Gruppeneinteilung: Alle Namen zufällig generiert.
+# Format: <gruppe> <tutor> <teilnehmer>+
 
-001 A  martin.cunningham gerty.macdowell
-002 B  councillor.nannetti ned.lambert
-003 A  haines jacky.caffrey
-004 B  sara.goulding bella.cohen
-006 A  bantam.lyons richie.goulding
-005 B  madden florry.talbot j.j.o-molloy      #not2
-007 A  john.henry.menton nurse.callan
-009 B  barney.kiernan walter.goulding
-010 A  jack.power dr.dixon
-013 B  kitty.ricketts cyril.sargent
-014 A  lieutenant.gardner maggy.dedalus
-015 B  lenehan katey.dedalus
-016 A  mrs.bellingham john.hooper
-019 B  simon.dedalus milly.bloom
-020 A  tommy.caffrey bob.doran
-022 B  cissy.caffrey john.eglinton
-029 A  nameless.narrator patrick.dignam.jr
-032 B  mary.driscoll garrett.deasy
-033 A  may.golding.dedalus patrick.dignam
-034 B  myles.crawford dilly.dedalus
-008 A  buck.mulligan edy.boardman
-023 B  martha.clifford denis.breen
-011 A  molly.bloom the.citizen
-012 B  mina.kennedy boody.dedalus
-017 A  leopold.bloom vincent.lynch
-024 B  ben.dollard richard.best
-018 A  private.compton thomas.w.lyster
-025 B  mervyn.talboys yelverton.barry
-021 A  zoe.higgins blazes.boylan
-026 B  josie.breen private.carr
-030 A  punch.costello john.conmee
-027 B  mrs.dignam george.william.russell
-031 A  stephen.dedalus lydia.douce
-028 B  corny.kelleher joe.hynes
+kraekrue B  micha.kraemer andré.krueger
+becklang A  alfonso.becker walther.lang
+meiewurs ~  sven.meier niklas.wurst # → buscmeie
+brauschm ~  gunnar.braun jan.schmid # jan.schmid hört auf, gunnar.braun→brameybac
+wolfbach ~  marc.wolf hendrik.bach  # marc.wolf hört auf
+petelang A  vinzent.petersen leo.lange
+vogtmeye B  gerhart.vogt hubertus.meyer
+fuchalbr B  achmed.fuchs franz.albrecht
+seidhofm A  alvin.seidel rollo.hofmann
+buscberg ~  karlheinz.busch samuel.berger # → buscmeie
+webehoff B  siegmund.weber sebastian.hoffmann
+kruebeck A  harry.krueger ludwig.beck
+neumschm B  manfred.neumann albrecht.schmitz
+schwwebe A  achim.schwarz detlef.weber
+wagnschr A  chris.wagner magnus.schroeder
+ludwstei A  fabian.ludwig joshua.stein
+lehmhoff B  leopold.lehmann winfried.hoffmann
+frankrau B  roland.franke ingo.kraus
+kaismuel B  marco.kaiser rico.mueller
+kochsand A  alfred.koch gert.sander
+winkkoen B  baldemar.winkler benny.koenig
+jansjung A  edmund.janssen marko.jung
+kellkrae B  sandro.keller alois.kraemer
+waltberg A  oskar.walter benedikt.berg
+petersen ~  justus.petersen
+simoschm B  luis.simon gustl.schmitz
+koehwagn B  benno.koehler uwe.wagner
+weismeie B  elmar.weiss mohammed.meier
+branberg A  josef.brandt reiner.bergmann
+schrgros A  herbert.schroeder kai.gross
+guensand B  steven.guenther pascal.sander
+schrschm B  paul.schreiber aron.schmidt
+arnokuhn B  patrick.arnold niels.kuhn
+schamaye A  augustus.schaefer ruprecht.mayer
+baumschu A  detlev.baumann sigmund.schulze
+meyebach ~  volker.meyer bertram.bach # Neue Gruppe mit gunnar.braun
+koensaue A  rudi.koenig horst.sauer
+lorejung B  hannes.lorenz andreas.jung
+kuhnrich B  ernst.kuhn edgar.richter
+zimmhahn A  alexander.zimmermann friedrich.hahn
+janspete ~  wilfried.jansen ralf.peters # → jansschn
+thommuel B  hubert.thomas johann.mueller
+frieklei ~  günther.friedrich theo.klein # theo.klein: ungültiger alias!
+petevoge ~  justus.petersen angelo.vogel # angelo.vogel→vogbramey
+krakoesch ~  frank.krause yannick.koehler michael.schneider # → janspete, kraukoeh
+fuchbaue A  benjamin.fuchs henning.bauer
+rothfrie B  mathias.roth hektor.friedrich
+bachfrie B  hendrik.bach günther.friedrich
+brameybac ~  gunnar.braun volker.meyer bertram.bach # → braumeye, koehbach
+jansschn A  wilfried.jansen michael.schneider
+kraukoeh ~  frank.krause yannick.koehler # → koehbach, krause
+buscmeie A  karlheinz.busch sven.meier
+braumeye ~  gunnar.braun volker.meyer # *→vogbramey
+koehbach A  yannick.koehler bertram.bach
+krause A  frank.krause
+vogbramey A  angelo.vogel gunnar.braun volker.meyer

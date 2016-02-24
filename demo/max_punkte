@@ -1,7 +1,19 @@
-# Format: Eine Zeile je Übungsblatt:
-#     <max. reg. Punkte> <max. Bonuspunkte>
+# Reguläre und maximale Punktzahl für die Übungsblätter.
 
- 0    0   #1. Blatt
-16    0   #2
-10    0   #3
-20    0   #4
+# Format: Je Blatt eine Zeile.  Zuerst die regulär erreichbare
+# Punktzahl, und dann die evtl. erreichbaren Bonuspunkte.
+
+#Pkte Bonus  # Blatt
+0     0      # 1
+16    0      # 2
+10    0      # 3
+18    0      # 4
+18    0      # 5
+22    0      # 6
+18    0      # 7
+12    0      # 8
+19    0      # 9
+17    2      # 10
+0     10     # 11
+17    0      # 12
+18    0      # 13
