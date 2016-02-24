@@ -13,6 +13,7 @@ fi;
     reqdTotal=50 reqdEach=10 maxLow=3 \
     maxPoints=max_punkte \
     groups=groups \
+    $(test "${1:-}" && echo "lim=${1}" || true) \
     alice.allison bob.bobbington
 
 less -S -x30,40 punktestand
