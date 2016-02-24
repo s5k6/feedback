@@ -1,3 +1,11 @@
+     _                _               _
+    | |            | | |             | |      Accumulate students points
+    | |  _   _   __| | |   __,   __  | |      from different groups and
+    |/  |/  |/  /  | |/ \_/  |  /    |/_)     through various tutors
+    |__/|__/|__/\_/|_/\_/ \_/|_/\___/| \_/
+    |\
+    |/
+
 
 Synopsis
 
@@ -99,4 +107,3 @@ Consistency checks performed
 
   * In the tutor's rating files, there must be at least one entry for
     every group and every assignment (there may be additional ones).
-
