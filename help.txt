@@ -35,8 +35,8 @@ Output
 
     The header comment contains the overall percentage.
 
-[ requested feature: Give students individual percentage, if member of
-different groups ]
+    [ requested feature: Give students individual percentage, if
+      previously member of different groups ]
 
   * For each student found in the {groups definition file}, an
     overview of gained points will be written into the {overview
@@ -97,7 +97,7 @@ Input
 Consistency checks performed
 
   * A student cannot gain points from different groups for the same
-    tutorial.
+    assignment.
 
   * A group cannot be rated more than once by different tutors for the
     same assignment.

@@ -1,7 +1,7 @@
 # Gruppeneinteilung: Alle Namen zufällig generiert.
 # Format: <gruppe> <tutor> <teilnehmer>+
 
-kraekrue B  micha.kraemer andré.krueger
+kraekrue B  micha.kraemer andre.krueger
 becklang A  alfonso.becker walther.lang
 meiewurs ~  sven.meier niklas.wurst # → buscmeie
 brauschm ~  gunnar.braun jan.schmid # jan.schmid hört auf, gunnar.braun→brameybac
@@ -43,12 +43,12 @@ kuhnrich B  ernst.kuhn edgar.richter
 zimmhahn A  alexander.zimmermann friedrich.hahn
 janspete ~  wilfried.jansen ralf.peters # → jansschn
 thommuel B  hubert.thomas johann.mueller
-frieklei ~  günther.friedrich theo.klein # theo.klein: ungültiger alias!
+frieklei ~  guenther.friedrich theo.klein # theo.klein: ungültiger alias!
 petevoge ~  justus.petersen angelo.vogel # angelo.vogel→vogbramey
 krakoesch ~  frank.krause yannick.koehler michael.schneider # → janspete, kraukoeh
 fuchbaue A  benjamin.fuchs henning.bauer
 rothfrie B  mathias.roth hektor.friedrich
-bachfrie B  hendrik.bach günther.friedrich
+bachfrie B  hendrik.bach guenther.friedrich
 brameybac ~  gunnar.braun volker.meyer bertram.bach # → braumeye, koehbach
 jansschn A  wilfried.jansen michael.schneider
 kraukoeh ~  frank.krause yannick.koehler # → koehbach, krause
