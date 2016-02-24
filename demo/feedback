@@ -4,11 +4,15 @@ shopt -s nullglob;
 
 cd "$(dirname "$0")";
 
+if ! test -d group; then
+    mkdir -p group/{001..34};
+fi;
+
 ../feedback \
-    overview=total_punkte feedback=group/%/punkte \
+    overview=punktestand feedback=group/%/punkte \
     reqdTotal=50 reqdEach=10 maxLow=3 \
     maxPoints=max_punkte \
     groups=groups \
     alice.allison bob.bobbington
 
-less -S -x30,40 total_punkte
+less -S -x30,40 punktestand
