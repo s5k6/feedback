@@ -68,7 +68,11 @@ Spaces, delimiters and newlines
 add the BOM which (unnecessarily) may be added to UTF-8 files by MS
 products.
 
-> space = oneOf " \t\65279"
+> space = oneOf $ [ ' '
+>                 , '\t'
+>                 , '\65279' -- ZERO WIDTH NO-BREAK SPACE U+feff
+>                 , '\160'   -- NO-BREAK SPACE U+a0
+>                 ]
 
 > spaces = many space
 
