@@ -26,7 +26,6 @@
 >       , limAssignments :: Maybe Int
 >       }
  
- 
 Store ratings with their position in source.
  
 > data Rating = Rating { at :: SourcePos, rat :: Rational }
@@ -246,7 +245,8 @@ Generate a report in the group's directory
 >                  $ M.map (fmap $ fmap rat) ratings
 
 
-> bar arg cfg
+> cliArgs :: String -> Config -> Config
+> cliArgs arg cfg
 >     = case break (=='=') arg of
 >         (key, '=':val)
 >             -> case key of
@@ -290,4 +290,4 @@ Generate a report in the group's directory
 >     = do as <- getArgs
 >          if null as
 >          then putStr Literal.help
->          else report =<< foldr bar nullCfg <$> getArgs
+>          else report $ foldr cliArgs nullCfg as
