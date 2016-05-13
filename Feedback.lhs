@@ -3,7 +3,7 @@
 > import qualified Data.Map as M
 > import qualified Data.Set as S
 > import Data.Maybe ( catMaybes )
-> import Data.List ( intersperse )
+> import Data.List ( intersperse, partition )
 > import System.Environment ( getArgs )
 > import Text.Read ( readMaybe )
 > import GHC.Exts ( sortWith )
@@ -173,13 +173,23 @@ Generate a report in the group's directory
 >   = writeFile (overview cfg) . unlines
 >     $
 >     [ uncols $ ["#", "100%", "req", "bonus", "min"] ++ titles
->     , uncols $ ["#", unRat totalReg, show (reqdTotal cfg) ++ "%", unRat $ totalBonus, show (reqdEach cfg) ++ "%"] ++ map unRat maxPoints
+>     , uncols $ ["#", unRat totalReg, show (reqdTotal cfg) ++ "%"
+>                , unRat $ totalBonus, show (reqdEach cfg) ++ "%"]
+>                ++ map unRat maxPoints
 >     , ""
 >     , uncols $ ["# student", "state", "got%", "margin", "lives"] ++ titles
 >     ]
 >     ++
->     (map g . reverse . sortWith skey . map f) (M.toList $ accumRatings (inverseGroups groups) ratings)
+>     map g (h actives)
+>     ++
+>     ["", "# not in any active group"]
+>     ++
+>     map g (h inactives)
 >   where
+>   activeStudents
+>     = S.fromList $ concat [ xs | (Just _, xs) <- map snd $ M.toList groups ]
+>   tuples = M.toList $ accumRatings (inverseGroups groups) ratings
+>   (actives, inactives) = partition (flip S.member activeStudents . fst) tuples
 >   titles = zipWith (\n _ -> "a" ++ show n) [1..] maxPoints
 >   totalReg = sum maxPoints
 >   totalBonus = sum limPoints - totalReg
@@ -187,9 +197,15 @@ Generate a report in the group's directory
 >   fMax = maxLow cfg
 >   reqd = totalReg * fromIntegral (reqdTotal cfg) / 100
 >   skey (student, result, gained, margin, failed, ps) = (margin, failed, student)
+>   h = reverse . sortWith skey . map f
 >   g (student, result, gained, margin, lives, ps)
 >       = uncols
->         $ student : (if result then "pass" else "fail") : (show gained ++ "%") : ((if margin >= 0 then ('+':) else id) (unRat margin)) : show lives : map (maybe "~" unRat) ps
+>         $ student
+>         : (if result then "pass" else "fail")
+>         : (show gained ++ "%")
+>         : ((if margin >= 0 then ('+':) else id) (unRat margin))
+>         : show lives
+>         : map (maybe "~" unRat) ps
 >   f (s,ps)
 >       = let gained = sum $ catMaybes ps
 >             gainedPerc = percent totalReg gained
@@ -221,8 +237,10 @@ Generate a report in the group's directory
 >            gks = M.keysSet groups
 >            unknown = S.toList $ S.difference rks gks
 >            unrated = S.toList $ S.difference gks rks
->        unless (null unrated) $ putStrLn . unwords $ "Unrated groups:" : unrated
+>        unless (null unrated) . putStrLn . unwords $
+>                              "Unrated groups:" : unrated
 >        unless (null unknown) $ error . unwords $ "Unknown groups:" : unknown
+>
 >        mkOverview cfg maxPoints limPoints groups ratings
 >        mapM_ (uncurry $ mkFeedback cfg maxPoints) . M.toList
 >                  $ M.map (fmap $ fmap rat) ratings
