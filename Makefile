@@ -1,6 +1,8 @@
-.PHONY : feedback all clean distclean lint
+targets = feedback grades
 
-all : feedback
+.PHONY : $(targets) all clean distclean lint
+
+all : $(targets)
 
 .cabal-sandbox/ cabal.sandbox.config : feedback.cabal
 	cabal sandbox init
@@ -9,15 +11,16 @@ all : feedback
 dist : .cabal-sandbox/ cabal.sandbox.config
 	cabal configure
 
-feedback : dist .cabal-sandbox/ cabal.sandbox.config
-	cabal build -j
-	strip -o feedback dist/build/feedback/feedback
+feedback grades : dist .cabal-sandbox/ cabal.sandbox.config
+	cabal build -j $@
+	strip -o $@ dist/build/$@/$@
 
 clean :
 	rm -rf dist/
 
 distclean : clean
-	rm -rf feedback .cabal-sandbox/ cabal.sandbox.config
+	rm -rf $(targets)
+	rm -rf .cabal-sandbox/ cabal.sandbox.config
 	which git >/dev/null && git clean -xnd
 
 lint :
