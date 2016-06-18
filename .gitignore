@@ -2,4 +2,4 @@
 cabal.sandbox.config
 feedback
 grades
-out/
+dist/

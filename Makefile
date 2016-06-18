@@ -1,30 +1,24 @@
-outputdir = out
-targets = feedback grades
+.PHONY : feedback all clean distclean lint
 
-.PHONY : all clean distclean test
+all : feedback
 
-all : $(targets)
+.cabal-sandbox/ cabal.sandbox.config : feedback.cabal
+	cabal sandbox init
+	cabal install -j --only-dependencies
 
-feedback : Feedback.lhs Tabular.lhs Literal.lhs help.txt
-	ghc --make -outputdir $(outputdir) -o feedback Feedback.lhs
-	strip feedback
+dist : .cabal-sandbox/ cabal.sandbox.config
+	cabal configure
 
-Literal.lhs : help.txt
-	touch $@
-
-grades : Grades.lhs Tabular.lhs
-	ghc --make -outputdir $(outputdir) -o grades Grades.lhs
-	strip grades
-
-install : $(targets)
-	cp feedback ~/opt/bin/
-	cp grades ~/opt/bin/
+feedback : dist .cabal-sandbox/ cabal.sandbox.config
+	cabal build -j
+	strip -o feedback dist/build/feedback/feedback
 
 clean :
-	rm -rf $(outputdir)
+	rm -rf dist/
 
 distclean : clean
-	rm -f $(targets)
+	rm -rf feedback .cabal-sandbox/ cabal.sandbox.config
+	which git >/dev/null && git clean -xnd
 
-test : feedback
-	demo/feedback
+lint :
+	hlint src
