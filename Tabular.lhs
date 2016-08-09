@@ -42,7 +42,7 @@ The field parsers                                               M-x orgtbl-mode
 
 > module Tabular ( table, tableFile, tableFile'
 >                , bln, nil, key
->                , int, integer, rational, double, float
+>                , int, integer, rational, double, float, perc
 >                , str, word
 >                , pos, getPosition
 >                , mbNil
@@ -163,6 +163,27 @@ Parse a decimal Integer.
 > integer :: Parser Integer
 > integer = lexeme $ sign <*> (integral 10 . map toInteger <$> digits1)
 
+
+
+Parse an integer percentage.
+
+> perc :: Parser Rational
+> perc
+>   = lexeme
+>     $
+>     (/ 100)
+>     <$>
+>     (
+>     sign
+>     <*>
+>     do n <- integral 10 . map toRational <$> digits1
+>        choice [ char '.' >> (n+) . places 10 . map toRational <$> digits1
+>               , char '/' >> (n/) . integral 10 . map toRational <$> digits1
+>               , return $ n
+>               ]
+>     <*
+>     char '%'
+>     )
 
 
 Parse a decimal Rational. Digests ‘+1.23’ and ‘-2/5’.
