@@ -73,7 +73,7 @@ Parse one rating (rational), check range 0–hi.
 >                    ]
 >                  )
 
->     let f mn = ( mn, brunner ad rp rk eg, (ad,rp,rk,eg) )
+>     let f mn = ( mn, toStudIS ad rp rk eg, (ad,rp,rk,eg) )
 >           where
 >             Just ea = M.lookup mn regKdp <|> M.lookup mn regPk2 <|> err ["unknown", show mn]
 >             ad = maybe False id $ M.lookup ea admission
@@ -90,15 +90,17 @@ Parse one rating (rational), check range 0–hi.
 
 
 
-> --      zul   regPk2 regKdp exam    ->  PK2                         KdP
-> brunner True  True   True  (Just g)  = (read g < 5.0 ? "BE" $ "NB", g    )
-> brunner True  True   True  Nothing   = ("NZ"                      , "NE" )
-> brunner True  True   False Nothing   = ("NZ"                      , "~" )
-> brunner True  False  True  (Just g)  = ("~"                       , g    )
-> brunner True  False  True  Nothing   = ("~"                       , "NE" )
-> brunner False True   True  Nothing   = ("NB"                      , "NZ" )
-> brunner True  True  False  (Just g)  = (read g < 5.0 ? "BE" $ "NB", "~"  )
-> brunner zul  regPk2 regKdp exam
+> --      zul   regPk2 regKdp exam    ->   PK2                         KdP
+> toStudIS True  True   True  (Just g)  = (read g < 5.0 ? "BE" $ "NB", g    )
+> toStudIS True  True   True  Nothing   = ("NE"                      , "NE" )
+> toStudIS True  True   False Nothing   = ("RM"                      , "~" )
+> toStudIS True  False  True  (Just g)  = (read g < 5.0 ? "BE" $ "NB", g    )
+> toStudIS True  False  True  Nothing   = ("~"                       , "NE" )
+> toStudIS False True   True  Nothing   = ("NZ"                      , "NZ" )
+ 
+ > toStudIS True  True  False  (Just g)  = (read g < 5.0 ? "BE" $ "NB", "~"  )
+
+> toStudIS zul  regPk2 regKdp exam
 >   = err [ "Dunno:"
 >         , show zul, show regPk2, show regKdp, show exam
 >         ]
