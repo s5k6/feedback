@@ -54,10 +54,10 @@ The field parsers                                               M-x orgtbl-mode
 
 > import Text.ParserCombinators.Parsec hiding ( (<|>), many, spaces, space )
 > import Control.Applicative
-> import Control.Monad (void )
+> import Control.Monad ( void, unless )
 > import Data.Char ( digitToInt )
 > import Data.Ratio
-> import Data.List ( intersperse )
+> import Data.List ( intersperse, intercalate )
 
 
 --------------------------------------------------------------------------------
@@ -68,11 +68,11 @@ Spaces, delimiters and newlines
 add the BOM which (unnecessarily) may be added to UTF-8 files by MS
 products.
 
-> space = oneOf $ [ ' '
->                 , '\t'
->                 , '\65279' -- ZERO WIDTH NO-BREAK SPACE U+feff
->                 , '\160'   -- NO-BREAK SPACE U+a0
->                 ]
+> space = oneOf [ ' '
+>               , '\t'
+>               , '\65279' -- ZERO WIDTH NO-BREAK SPACE U+feff
+>               , '\160'   -- NO-BREAK SPACE U+a0
+>               ]
 
 > spaces = many space
 
@@ -123,8 +123,7 @@ Parsing a table
 ‘tableFile rec fn’
 
 > tableFile :: Parser a -> String -> IO (Either ParseError [a])
-> tableFile l fn
->     = parseFromFile p fn
+> tableFile l = parseFromFile p
 >     where
 >     p = do spaces
 >            many $ comment <|> nl
@@ -179,7 +178,7 @@ Parse an integer percentage.
 >     do n <- integral 10 . map toRational <$> digits1
 >        choice [ char '.' >> (n+) . places 10 . map toRational <$> digits1
 >               , char '/' >> (n/) . integral 10 . map toRational <$> digits1
->               , return $ n
+>               , return n
 >               ]
 >     <*
 >     char '%'
@@ -197,7 +196,7 @@ Parse a decimal Rational. Digests ‘+1.23’ and ‘-2/5’.
 >       do n <- integral 10 . map toRational <$> digits1
 >          choice [ char '.' >> (n+) . places 10 . map toRational <$> digits1
 >                 , char '/' >> (n/) . integral 10 . map toRational <$> digits1
->                 , return $ n
+>                 , return n
 >                 ]
 
 
@@ -259,10 +258,10 @@ Helper functions
 
 
 > assert p msg
->   = if p then return () else fail msg
+>   = unless p $ fail msg
 
 
-> uncols = concat . intersperse "\t"
+> uncols = intercalate "\t"
 
 
 > unRat = show . fromRational
@@ -289,13 +288,13 @@ Example section
 
 Parsing a table of type  String × Integer
 
-> test0 fn = tableFile' ((,) <$> str <*> int) fn
+> test0 = tableFile' ((,) <$> str <*> int)
 
 
 
 Parsing a table of type  String × (Integer | Nil)
 
-> test1 fn = tableFile' ((,) <$> str <*> mbNil int) fn
+> test1 = tableFile' ((,) <$> str <*> mbNil int)
 
 
 

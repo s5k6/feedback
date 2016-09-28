@@ -1,4 +1,5 @@
-targets = feedback grades
+targets = feedback
+# grades booking
 
 .PHONY : $(targets) all clean distclean lint
 
@@ -24,4 +25,4 @@ distclean : clean
 	which git >/dev/null && git clean -xnd
 
 lint :
-	hlint src
+	hlint *.lhs

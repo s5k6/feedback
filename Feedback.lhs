@@ -1,8 +1,11 @@
+
+Note: This is an unmaintained ad-hoc tool
+
 > import Tabular
 > import Control.Applicative
 > import qualified Data.Map as M
 > import qualified Data.Set as S
-> import Data.Maybe ( catMaybes )
+> import Data.Maybe ( catMaybes, fromMaybe )
 > import Data.List ( intersperse, partition )
 > import System.Environment ( getArgs )
 > import Text.Read ( readMaybe )
@@ -56,7 +59,7 @@ Parse a file of ratings, make sure each is within the valid range.
 >   = M.fromListWithKey f
 >     <$>
 >     tableFile'
->     ((,) <$> (word <|> str) <*> (sequence $ map rating maxPoints)
+>     ((,) <$> (word <|> str) <*> mapM rating maxPoints
 >      <* many (mbNil rational) -- ignore excessive ratings!
 >     )
 >     t
@@ -121,7 +124,7 @@ for the same assignment.
 > accumRatings mbs rbg
 >   = M.map (map (fmap rat) . foldl1 zipDisjoint . map (lup rbg) . S.toList) mbs
 >   where
->   lup k m = maybe [] id $ M.lookup m k
+>   lup k m = fromMaybe [] $ M.lookup m k
 
 
 
@@ -143,16 +146,15 @@ Generate a report in the group's directory
 >     , "#Blatt\tPunkte\tvon\tProzent"
 >     ]
 >     ++
->     ( map uncols
->       $
->       zipWith (:) (map (pad 2 '0') [1..])
+>     map uncols
+>     ( zipWith (:) (map (pad 2 '0') [1..])
 >       $
 >       zipWith (:) (map (maybe "~" unRat) ps)
 >       $
 >       zipWith (:) (map unRat maxPoints)
 >       $
 >       map (return . maybe "~" (pad 3 ' '))
->           (zipWith percent maxPoints (map (maybe 0 id) ps))
+>           (zipWith percent maxPoints (map (fromMaybe 0) ps))
 >     )
 >     ++
 >     [ ""
@@ -173,7 +175,7 @@ Generate a report in the group's directory
 >     $
 >     [ uncols $ ["#", "100%", "req", "bonus", "min"] ++ titles
 >     , uncols $ ["#", unRat totalReg, show (reqdTotal cfg) ++ "%"
->                , unRat $ totalBonus, show (reqdEach cfg) ++ "%"]
+>                , unRat totalBonus, show (reqdEach cfg) ++ "%"]
 >                ++ map unRat maxPoints
 >     , ""
 >     , uncols $ ["# student", "state", "got%", "margin", "lives"] ++ titles
@@ -202,7 +204,7 @@ Generate a report in the group's directory
 >         $ student
 >         : (if result then "pass" else "fail")
 >         : (show gained ++ "%")
->         : ((if margin >= 0 then ('+':) else id) (unRat margin))
+>         : (if margin >= 0 then ('+':) else id) (unRat margin)
 >         : show lives
 >         : map (maybe "~" unRat) ps
 >   f (s,ps)
@@ -212,7 +214,7 @@ Generate a report in the group's directory
 >             margin = gained - reqd
 >         in ( s
 >            , margin >= 0 && failed <= fMax
->            , maybe 0 id gainedPerc
+>            , fromMaybe 0 gainedPerc
 >            , margin
 >            , fMax - failed
 >            , ps
@@ -264,7 +266,7 @@ Generate a report in the group's directory
 >                _ -> error $ "Unknown key `"++key++"`"
 >             where
 >             integer
->                 = maybe (error $ "expected: "++key++"::int") id
+>                 = fromMaybe (error $ "expected: "++key++"::int")
 >                   $ readMaybe val
 >             percent
 >                 = if integer < 0 || 100 < integer

@@ -21,13 +21,17 @@ executable feedback
   build-depends:       base >=4.9 && <4.10, containers >=0.5 && <0.6, template-haskell >=2.11 && <2.12, parsec >=3.1 && <3.2
   default-language:    Haskell2010
 
+-- the following are even less maintained and even more ad-hoc.
+                                 
 executable grades
+  buildable: False
   main-is:             Grades.lhs
 --  ghc-options:         -Wall -fno-warn-name-shadowing
   build-depends:       base >=4.9 && <4.10, containers >=0.5 && <0.6, template-haskell >=2.11 && <2.12, parsec >=3.1 && <3.2
   default-language:    Haskell2010
 
 executable booking
+  buildable: False
   main-is:             Booking.lhs
 --  ghc-options:         -Wall -fno-warn-name-shadowing
   build-depends:       base >=4.9 && <4.10, containers >=0.5 && <0.6, template-haskell >=2.11 && <2.12, parsec >=3.1 && <3.2

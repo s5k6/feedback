@@ -1,4 +1,7 @@
-> {-# OPTIONS_GHC -XTemplateHaskell #-}
+
+Template haskell snippet to add help text into compiled program.
+
+> {-# LANGUAGE TemplateHaskell #-}
 >
 > module Literal where
 >                
