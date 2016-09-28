@@ -1,3 +1,0 @@
-cabal sandbox init
-cabal install parsec
-cabal build

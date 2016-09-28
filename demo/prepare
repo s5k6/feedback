@@ -1,0 +1,19 @@
+#!/bin/bash
+set -u -e -C;
+shopt -s nullglob;
+
+echo 'This should be run only once, to set up the demo environment.'
+
+cd "$(dirname "$0")";
+
+# Only for demo: Generate group directories if they do not exist
+if test -d group; then
+    echo 'Found `group` directory, nothing to do.';
+    exit 1
+fi;
+
+
+sed -r 's/#.*//;/^\s*$/d;s/^(\S+)\s.*$/\1/' groups | while read grp; do
+    mkdir -p "group/${grp}";
+done;
+echo 'Done.'

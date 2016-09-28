@@ -4,13 +4,6 @@ shopt -s nullglob;
 
 cd "$(dirname "$0")";
 
-# Only for demo: Generate group directories if they do not exist
-if ! test -d group; then
-    sed -r 's/#.*//;/^\s*$/d;s/^(\S+)\s.*$/\1/' groups | while read grp; do
-        mkdir -p "group/${grp}";
-    done;
-fi;
-
 ../feedback \
     overview=punktestand feedback=group/%/punkte \
     reqdTotal=50 reqdEach=10 maxLow=3 \
